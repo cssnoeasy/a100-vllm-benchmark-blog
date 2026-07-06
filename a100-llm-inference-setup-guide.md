@@ -1,3 +1,10 @@
+---
+title: "从零搭建大模型推理服务：A100 服务器环境配置与 vLLM 多模型部署全指南"
+date: 2026-07-05
+description: "在双 A100 服务器上从裸机开始，一步步完成 NVIDIA 驱动、CUDA、Miniconda、vLLM 的安装配置，并部署多款开源大模型"
+categories: ["部署", "教程"]
+---
+
 # 从零搭建大模型推理服务：A100 服务器环境配置与 vLLM 多模型部署全指南
 
 > 硬件：NVIDIA A100 80GB PCIe ×2 · 系统：Ubuntu 22.04 LTS · 推理框架：vLLM 0.19.0
