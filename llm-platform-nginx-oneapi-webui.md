@@ -5,7 +5,7 @@ description: "在 vLLM 推理后端之上，用 Nginx 反向代理、One API 网
 categories: ["架构", "教程"]
 ---
 
-# 企业级大模型平台架构实战：Nginx 反向代理 + One API 网关 + Open WebUI 完整方案
+# 大模型平台架构实战：Nginx 反向代理 + One API 网关 + Open WebUI 完整方案
 
 > 在 vLLM 推理后端之上，用 Nginx、One API 和 Open WebUI 搭建一套安全、可管理、面向团队的大模型服务平台
 
