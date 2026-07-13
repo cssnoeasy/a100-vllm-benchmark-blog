@@ -1,0 +1,91 @@
+#!/bin/bash
+# ============================================================
+# 实验一：--gpu-memory-utilization 多值对比测试 
+# 硬件：双A100 80GB | 模型：本地 Qwen2.5-7B
+# ============================================================
+
+# ---------- 强制激活 conda ----------
+source /home/agent/miniconda3/etc/profile.d/conda.sh
+conda activate vllm_env
+
+# ---------- 固定参数 ----------
+MODEL="/home/agent/models/qwen2.5_7b/Qwen2.5-7B-Instruct"
+TP=2
+INPUT_LEN=2048
+OUTPUT_LEN=512
+NUM_PROMPTS=100
+MAX_CONCURRENCY=32
+PORT=8000
+MAX_MODEL_LEN=4096
+
+RESULT_BASE="./results/utilization"
+mkdir -p $RESULT_BASE
+
+log_info() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] INFO: $1"
+}
+log_error() {
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] ERROR: $1" >&2
+}
+
+# ---------- 测试循环 ----------
+for UTIL in 0.70 0.75 0.80 0.85 0.90 0.95; do
+    log_info "=========================================="
+    log_info "开始测试 --gpu-memory-utilization = $UTIL"
+    log_info "=========================================="
+
+    # 启动服务
+    log_info "启动 vLLM 服务..."
+    vllm serve $MODEL \
+        --tensor-parallel-size $TP \
+        --gpu-memory-utilization $UTIL \
+        --max-model-len $MAX_MODEL_LEN \
+        --port $PORT \
+        > $RESULT_BASE/vllm_util_${UTIL}.log 2>&1 &
+    VLLM_PID=$!
+    log_info "vLLM PID: $VLLM_PID"
+
+    sleep 30
+
+    # 健康检查
+    HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:$PORT/health)
+    if [ "$HTTP_CODE" != "200" ]; then
+        log_error "服务启动失败 (HTTP $HTTP_CODE)，跳过"
+        kill $VLLM_PID 2>/dev/null
+        sleep 5
+        continue
+    fi
+    log_info "健康检查通过"
+
+    # 记录压测前显存
+    nvidia-smi --query-gpu=index,memory.used,memory.total,utilization.gpu \
+        --format=csv > $RESULT_BASE/gpu_before_${UTIL}.csv
+
+    # 运行压测（使用 python -m 方式）
+    log_info "开始压测 (input=$INPUT_LEN, output=$OUTPUT_LEN, concurrency=$MAX_CONCURRENCY)..."
+    python -m vllm.benchmarks.serve \
+        --backend openai \
+        --base-url http://localhost:$PORT \
+        --model $MODEL \
+        --dataset-name random \
+        --random-input-len $INPUT_LEN \
+        --random-output-len $OUTPUT_LEN \
+        --num-prompts $NUM_PROMPTS \
+        --max-concurrency $MAX_CONCURRENCY \
+        --save-result \
+        --result-dir $RESULT_BASE/util_${UTIL} \
+        2>&1 | tee $RESULT_BASE/bench_util_${UTIL}.log
+
+    # 记录压测后显存
+    nvidia-smi --query-gpu=index,memory.used,memory.total,utilization.gpu \
+        --format=csv > $RESULT_BASE/gpu_after_${UTIL}.csv
+
+    # 停止服务
+    log_info "停止 vLLM (PID: $VLLM_PID)"
+    kill $VLLM_PID 2>/dev/null
+    sleep 10
+    log_info "测试 util=$UTIL 完成"
+    log_info ""
+done
+
+log_info "所有测试完成！结果在: $RESULT_BASE"

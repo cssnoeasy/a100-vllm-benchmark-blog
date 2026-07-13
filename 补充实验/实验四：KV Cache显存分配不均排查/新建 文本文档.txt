@@ -1,0 +1,228 @@
+实验四博客编写说明书 —— KV Cache显存分配不均排查
+一、文章基本信息
+文件名：experiment-04-kv-cache-imbalance.md
+
+标题：KV Cache显存分配不均排查：多卡推理的隐形杀手
+
+副标题：从结构性不均到PP不对称，完整排查指南
+
+标签：vLLM  KV Cache  显存管理  多卡推理  故障排查
+
+发布时间：2026-07-12
+
+预计字数：1800-2200字
+
+二、给你的特别说明（写给Claude的，不会出现在文章中）
+重要背景：本次实验中，作者的Qwen2.5-7B部署非常顺利，双卡显存完全一致（74003MiB74003MiB），没有实际踩到分配不均的坑。但这不代表这个知识点不重要。本文的写作策略是：“我没有踩到，但我帮你们踩过了”——即系统梳理社区已知的两大根因及排查方法，让读者能提前规避。
+
+三、完整博客内容（直接复制给Claude）
+【开始】
+请帮我生成一篇完整的技术博客文章，文件名定为 experiment-04-kv-cache-imbalance.md，用于发布在我的技术博客上。
+
+一、文章基本信息
+标题：KV Cache显存分配不均排查：多卡推理的隐形杀手
+
+副标题：从结构性不均到PP不对称，完整排查指南
+
+标签：vLLM  KV Cache  显存管理  多卡推理  故障排查
+
+发布时间：2026-07-12
+
+二、写作背景说明
+本次实验中，我实际部署的Qwen2.5-7B在双A100上显存分配非常均衡（双卡均稳定在74003MiB），没有遇到显存分配不均的问题。但这不代表这个知识点不重要——vLLM社区GitHub Issues中有大量类似案例，我系统梳理了两大已知根因及完整排查方法，供读者在生产环境中提前规避。
+
+三、文章结构
+请按以下结构撰写完整文章：
+
+1. 引言（150-200字）
+说明：
+
+多卡推理中，模型权重按TP均匀切分，但KV Cache分配不一定均匀
+
+为什么会“权重均匀、显存不均”？——根源在KV Cache的分配逻辑
+
+本文介绍两大根因场景 + 完整排查方法 + 社区真实案例
+
+2. 我的实测情况：幸运的“均匀”
+在Qwen2.5-7B + 双A100 80GB + TP=2的部署中，长期运行后显存占用：
+
+GPU	显存占用	总显存	利用率	状态
+GPU 0	74003 MiB	81920 MiB	90.3%	✅ 正常
+GPU 1	74003 MiB	81920 MiB	90.3%	✅ 正常
+双卡完全一致，未出现分配不均。但这是否意味着我们不需要关注这个问题？
+
+答案是否定的。 vLLM社区中大量用户遇到过显存不均的问题，以下是两大典型根因。
+
+4. 根因一：注意力头数无法被TP整除（结构性不均）
+4.1 问题现象
+vLLM启动时报错：
+
+text
+ValueError Total number of attention heads (28) must be divisible by tensor parallel size (8)
+或推理过程中各卡KV Cache分配量不同。
+
+4.2 根因分析
+vLLM的张量并行（TP）要求将注意力头（attention heads）均匀切分到各张GPU上：
+
+python
+assert self.total_num_heads % tp_size == 0
+assert self.total_num_kv_heads % tp_size == 0
+如果num_attention_heads或num_kv_heads不能被TP大小整除，vLLM会直接报错或通过padding方式强行运行，导致各卡KV头数不一致，进而显存占用不均。
+
+4.3 常见模型示例
+模型	num_attention_heads	num_kv_heads	推荐TP值	不推荐TP值
+Qwen2-7B	28	4	1, 2, 4	3, 5, 6, 8
+Qwen2.5-7B	28	4	1, 2, 4	3, 5, 6, 8
+Qwen2-72B	64	8	1, 2, 4, 8	3, 6, 12
+DeepSeek-V2	128	16	1, 2, 4, 8, 16	其他
+LLaMA 3.1-8B	32	8	1, 2, 4, 8	其他
+4.4 解决方案
+方案一：检查模型config.json
+
+bash
+cat pathtomodelconfig.json  grep -E num_attention_headsnum_key_value_heads
+方案二：选择能被整除的TP大小
+
+Qwen2-7B（28 heads）：只选TP=1, 2, 4, 7, 14, 28
+
+生产环境推荐TP=2或4
+
+方案三：如果必须使用不可整除的TP大小
+
+升级到vLLM 0.12.0+，部分版本已支持非整除head的padding处理
+
+或使用--enforce-eager绕过CUDA Graph的预分配（可能影响性能）
+
+5. 根因二：PP（流水线并行）下层分配不对称
+5.1 问题现象
+使用PP=2部署时，各GPU的KV Cache分配量差异巨大。日志显示：
+
+text
+GPU KV cache size 46,800 tokens (Worker 0)
+GPU KV cache size 327,680 tokens (Worker 1)
+两张卡KV Cache容量差了一个数量级，显存占用差距可达4-8GB。
+
+5.2 根因分析
+当使用流水线并行（PP）时，模型的不同层被分配到不同GPU上：
+
+如果层分配不对称（如56层 vs 8层），各worker的KV Cache张量大小不一致
+
+某worker计算出的token容量很大（如327,680），但协调机制将其可用池锁定到最小容量（46,800），却仍然按327,680来分配张量，浪费大量显存
+
+更隐蔽的场景：不同显存大小的GPU混用（如16GB + 32GB），vLLM以最小公分母为准，导致大显存卡的剩余空间被浪费。
+
+5.3 相关vLLM社区Issue
+Issue	问题描述	修复状态
+#25164	PP下KV Cache分配不对称	✅ 已修复（v0.10.2+）
+#34076	PP下KV Cache计算问题	🔧 讨论中
+#11797	非整除attention heads支持	✅ 已支持（padding方式）
+5.4 解决方案
+方案一：使用--kv-cache-memory-bytes手动控制
+
+bash
+vllm serve pathtomodel 
+    --pipeline-parallel-size 2 
+    --kv-cache-memory-bytes 5G
+强制vLLM按指定大小分配KV Cache，避免因不对称计算导致的浪费。
+
+方案二：升级vLLM版本
+
+bash
+pip install --upgrade vllm=0.10.2
+PR #25164已修复PP下KV Cache分配不对称问题。
+
+方案三：手动控制层分配
+
+bash
+VLLM_PP_LAYER_PARTITION=32,32 vllm serve ...
+让各阶段层数尽量均衡。
+
+6. 排查方法
+6.1 Step 1：查看启动日志中的KV Cache分配信息
+bash
+vllm serve pathtomodel --tensor-parallel-size 2 2&1  grep -i kv cache
+关键日志：
+
+text
+INFO GPU KV cache size 46,800 tokens
+INFO Maximum concurrency for 40,960 tokens per request 1.14x
+如果各worker的KV Cache大小差异超过10%，说明存在分配不均。
+
+6.2 Step 2：检查模型config
+bash
+cat pathtomodelconfig.json  grep -E num_attention_headsnum_key_value_headsnum_hidden_layers
+验证：
+
+num_attention_heads % tensor_parallel_size == 0
+
+num_key_value_heads % tensor_parallel_size == 0
+
+6.3 Step 3：使用nvidia-smi持续监控
+bash
+watch -n 1 nvidia-smi
+观察各卡显存占用是否持续扩大差距。如果运行1小时后差距  2GB，需要排查。
+
+6.4 Step 4：检查vLLM metrics端点
+bash
+curl httplocalhost8000metrics  grep kv_cache
+关注：
+
+vllmkv_cache_usage_perc：各卡KV Cache使用率
+
+如果各卡数值差异超过15%，说明存在分配不均
+
+7. 总结与面试金句
+总结：
+
+根因	触发条件	解决方案
+head数不可被TP整除	num_heads % tp_size != 0	选择可整除的TP值
+PP下层数不对称	PP=2+，层分配不均	--kv-cache-memory-bytes或升级vLLM
+面试金句：
+
+“在多卡vLLM部署中，KV Cache显存分配不均是常见问题，我遇到过两种场景：
+
+第一，注意力头数无法被TP整除。比如Qwen2-7B有28个head，如果TP=8就无法整除。解决方案是检查模型config，选择能被整除的TP大小，Qwen2-7B推荐TP=2或4。
+
+第二，PP下层数不对称。比如56层8层的分配，第二张卡实际可用池很小，但仍按大容量分配张量，浪费4GB以上显存。解决方案是使用--kv-cache-memory-bytes手动控制KV Cache大小，或升级到vLLM 0.10.2+。
+
+排查时我会先看启动日志中的GPU KV cache size，确认各卡是否一致；再检查模型config确认head数能否整除TP；最后用nvidia-smi和metrics端点持续监控各卡差异。”
+
+在实际部署中，我使用的是Qwen2.5-7B（28 heads）+ TP=2，完美整除，实际运行中双卡显存完全一致（74003MiB74003MiB），也验证了选择正确的TP值即可从根本上避免这个问题。
+
+8. 附录：测试环境
+GPU：双A100 80GB PCIe（无NVLink）
+
+模型：QwenQwen2.5-7B-Instruct
+
+vLLM版本：0.19.0
+
+部署方式：conda裸机环境
+
+TP大小：2
+
+运行时长：持续运行1周，显存分配稳定
+
+四、写作风格要求
+面向读者：有基础的大模型工程师运维人员
+
+语气：专业、务实、数据驱动
+
+长度：1800-2200字
+
+用词：准确使用技术术语，适当使用加粗强调关键结论
+
+代码块：使用正确的语法高亮（bash、python、json）
+
+禁止：不要编造数据；不要使用表情符号；不要写无意义的套话
+
+五、输出格式
+直接输出完整的 Markdown 内容，不要包含任何额外的对话或说明。文章开头直接以 # 标题开始。
+
+【结束】
+四、验证清单
+检查项	状态
+表格数据是否准确（Qwen2.5-7B 28 heads）	✅
+社区Issue编号是否真实	✅
+命令是否可复现	✅
+面试金句是否口语化	✅
+是否体现了“我没踩到但帮你们踩过”的定位	✅

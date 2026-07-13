@@ -1,0 +1,89 @@
+TP=2 短文本（512/256，并发8）
+============ Serving Benchmark Result ============
+Successful requests:                     100
+Benchmark duration (s):                  34.95
+Total input tokens:                      51200
+Total generated tokens:                  23658
+Request throughput (req/s):              2.86
+Output token throughput (tok/s):         676.87
+Total Token throughput (tok/s):          2141.73
+---------------Time to First Token----------------
+Mean TTFT (ms):                          121.44
+Median TTFT (ms):                        65.83
+P99 TTFT (ms):                           457.96
+-----Time per Output Token (excl. 1st token)------
+Mean TPOT (ms):                          11.32
+Median TPOT (ms):                        11.06
+P99 TPOT (ms):                           13.29
+---------------Inter-token Latency----------------
+Mean ITL (ms):                           10.98
+Median ITL (ms):                         10.16
+P99 ITL (ms):                            42.95
+==================================================
+PP=2 短文本（512/256，并发8）
+============ Serving Benchmark Result ============
+Successful requests:                     100
+Benchmark duration (s):                  72.79
+Total input tokens:                      51200
+Total generated tokens:                  24180
+Request throughput (req/s):              1.37
+Output token throughput (tok/s):         332.21
+Total Token throughput (tok/s):          1035.64
+---------------Time to First Token----------------
+Mean TTFT (ms):                          155.31
+Median TTFT (ms):                        144.23
+P99 TTFT (ms):                           368.97
+-----Time per Output Token (excl. 1st token)------
+Mean TPOT (ms):                          23.90
+Median TPOT (ms):                        23.04
+P99 TPOT (ms):                           26.43
+---------------Inter-token Latency----------------
+Mean ITL (ms):                           23.14
+Median ITL (ms):                         22.58
+P99 ITL (ms):                            54.42
+==================================================
+
+TP=2 长文本（2048/512，并发32）
+============ Serving Benchmark Result ============
+Successful requests:                     100
+Benchmark duration (s):                  35.73
+Total input tokens:                      204800
+Total generated tokens:                  47767
+Request throughput (req/s):              2.80
+Output token throughput (tok/s):         1336.89
+Total Token throughput (tok/s):          7068.79
+---------------Time to First Token----------------
+Mean TTFT (ms):                          1303.61
+Median TTFT (ms):                        751.21
+P99 TTFT (ms):                           5062.23
+-----Time per Output Token (excl. 1st token)------
+Mean TPOT (ms):                          23.24
+Median TPOT (ms):                        21.87
+P99 TPOT (ms):                           151.95
+---------------Inter-token Latency----------------
+Mean ITL (ms):                           20.71
+Median ITL (ms):                         13.21
+P99 ITL (ms):                            153.10
+==================================================
+PP=2 长文本（2048/512，并发32）
+============ Serving Benchmark Result ============
+Successful requests:                     100
+Benchmark duration (s):                  102.21
+Total input tokens:                      204800
+Total generated tokens:                  49041
+Request throughput (req/s):              0.98
+Output token throughput (tok/s):         479.81
+Total Token throughput (tok/s):          2483.52
+---------------Time to First Token----------------
+Mean TTFT (ms):                          924.10
+Median TTFT (ms):                        630.49
+P99 TTFT (ms):                           3029.51
+-----Time per Output Token (excl. 1st token)------
+Mean TPOT (ms):                          62.65
+Median TPOT (ms):                        62.84
+P99 TPOT (ms):                           65.70
+---------------Inter-token Latency----------------
+Mean ITL (ms):                           61.61
+Median ITL (ms):                         59.66
+P99 ITL (ms):                            175.52
+==================================================
