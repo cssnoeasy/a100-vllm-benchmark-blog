@@ -5,9 +5,6 @@ description: >-
 url: https://cssnoeasy.github.io
 baseurl: /a100-vllm-benchmark-blog
 
-# ─── 主题 ───
-theme: jekyll-theme-cayman
-
 # ─── 插件 ───
 plugins:
   - jekyll-seo-tag
@@ -19,6 +16,9 @@ highlighter: rouge
 kramdown:
   input: GFM
   syntax_highlighter: rouge
+
+# ─── 永久链接 ───
+permalink: /:title/
 
 # ─── 默认 front matter ───
 defaults:

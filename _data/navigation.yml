@@ -1,0 +1,32 @@
+# 侧边栏导航数据
+
+- title: "总览：部署调优全记录"
+  url: /
+
+- title: "部署教程"
+  children:
+    - title: "从零搭建大模型推理服务"
+      url: /a100-llm-inference-setup-guide/
+    - title: "Nginx + One API + Open WebUI"
+      url: /llm-platform-nginx-oneapi-webui/
+    - title: "内网大模型接入Coding Agent"
+      url: /%E5%86%85%E7%BD%91%E5%A4%A7%E6%A8%A1%E5%9E%8B%E6%8E%A5%E5%85%A5coding-agent%E6%9E%B6%E6%9E%84/
+
+- title: "调优实验"
+  children:
+    - title: "gpu-memory-utilization 对比"
+      url: /%E8%A1%A5%E5%85%85%E5%AE%9E%E9%AA%8C1/
+    - title: "TP vs PP 对比实验"
+      url: /%E8%A1%A5%E5%85%85%E5%AE%9E%E9%AA%8C2/
+
+- title: "踩坑运维"
+  children:
+    - title: "NCCL 通信踩坑实录"
+      url: /%E8%A1%A5%E5%85%85%E5%AE%9E%E9%AA%8C3/
+    - title: "KV Cache 分配不均排查"
+      url: /%E8%A1%A5%E5%85%85%E5%AE%9E%E9%AA%8C4/
+
+- title: "附录"
+  children:
+    - title: "最终压测数据表"
+      url: /%E6%9C%80%E7%BB%88%E5%8E%8B%E6%B5%8B%E6%95%B0%E6%8D%AE%E8%A1%A8/

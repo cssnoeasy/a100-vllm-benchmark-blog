@@ -1,0 +1,102 @@
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--heading-color);
+  font-weight: 600;
+  line-height: 1.35;
+  margin: 2rem 0 1rem;
+}
+
+h1 { font-size: 2rem; }
+h2 {
+  font-size: 1.55rem;
+  margin-top: 2.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--hr-color);
+}
+h3 { font-size: 1.25rem; }
+h4 { font-size: 1.1rem; }
+
+.post-body > h1:first-child { margin-top: 0; }
+
+/* Paragraphs */
+p {
+  margin: 1rem 0;
+}
+
+/* Links */
+a {
+  color: var(--link-color);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: var(--link-hover);
+  text-decoration: underline;
+}
+
+/* Blockquotes */
+blockquote {
+  margin: 1.5rem 0;
+  padding: 1rem 1.25rem;
+  border-left: 4px solid var(--blockquote-border);
+  background: var(--blockquote-bg);
+  border-radius: 0 6px 6px 0;
+  color: #2e3440;
+}
+
+blockquote p {
+  margin: 0.25rem 0;
+}
+
+blockquote > p:first-child { margin-top: 0; }
+blockquote > p:last-child { margin-bottom: 0; }
+
+/* Horizontal rules */
+hr {
+  border: none;
+  border-top: 1px solid var(--hr-color);
+  margin: 2rem 0;
+}
+
+/* Lists */
+.post-body ul,
+.post-body ol {
+  margin: 1rem 0;
+  padding-left: 1.5rem;
+}
+
+.post-body li {
+  margin: 0.35rem 0;
+}
+
+.post-body li > ul,
+.post-body li > ol {
+  margin: 0.25rem 0;
+}
+
+/* Strong & emphasis */
+strong {
+  font-weight: 600;
+  color: var(--heading-color);
+}
+
+/* Images */
+.post-body img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 6px;
+  margin: 1.5rem auto;
+  display: block;
+  border: 1px solid var(--table-border);
+}
+
+/* Image alt text as caption */
+.post-body img + em {
+  display: block;
+  text-align: center;
+  font-size: 0.88rem;
+  color: var(--meta-text);
+  margin-top: 0.25rem;
+  margin-bottom: 1.5rem;
+}

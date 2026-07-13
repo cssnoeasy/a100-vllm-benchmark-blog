@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  {% if page.description %}
+  <meta name="description" content="{{ page.description }}">
+  {% else %}
+  <meta name="description" content="{{ site.description }}">
+  {% endif %}
+  <title>{% if page.title %}{{ page.title }} — {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+  <link rel="stylesheet" href="{{ '/assets/css/style.css' | prepend: site.baseurl }}">
+  {% if page.math %}
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+  {% endif %}
+  {% seo %}
+</head>
+<body>
+  <button class="mobile-toggle" id="mobileToggle" aria-label="菜单">
+    <span></span>
+    <span></span>
+    <span></span>
+  </button>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  <div class="page-wrapper">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <a href="{{ site.baseurl }}/" class="sidebar-title">{{ site.title }}</a>
+        <p class="sidebar-subtitle">大模型推理 · 性能调优 · 平台架构</p>
+      </div>
+      <nav class="sidebar-nav">
+        {% assign current_url = page.url | remove: '.html' %}
+        {% for item in site.data.navigation %}
+          {% if item.children %}
+            {% assign is_open = false %}
+            {% for child in item.children %}
+              {% if current_url == child.url %}
+                {% assign is_open = true %}
+              {% endif %}
+            {% endfor %}
+            <details class="nav-group" {% if is_open %}open{% endif %}>
+              <summary class="nav-group-title">{{ item.title }}</summary>
+              <ul class="nav-group-items">
+                {% for child in item.children %}
+                <li>
+                  <a href="{{ child.url | prepend: site.baseurl }}"
+                     class="nav-item{% if current_url == child.url %} active{% endif %}">
+                    {{ child.title }}
+                  </a>
+                </li>
+                {% endfor %}
+              </ul>
+            </details>
+          {% else %}
+            <a href="{{ item.url | prepend: site.baseurl }}"
+               class="nav-item nav-item--top{% if current_url == item.url %} active{% endif %}">
+              {{ item.title }}
+            </a>
+          {% endif %}
+        {% endfor %}
+      </nav>
+      <div class="sidebar-footer">
+        <p>© 2026 · Powered by Jekyll</p>
+      </div>
+    </aside>
+    <main class="content">
+      <article class="post">
+        {% if page.title %}
+        <header class="post-header">
+          <h1 class="post-title">{{ page.title }}</h1>
+          {% if page.date %}
+          <div class="post-meta">
+            <time datetime="{{ page.date | date: '%Y-%m-%d' }}">{{ page.date | date: '%Y 年 %-m 月 %-d 日' }}</time>
+            {% if page.categories %}
+            <span class="post-categories">
+              {% for cat in page.categories %}
+              <span class="post-category">{{ cat }}</span>
+              {% endfor %}
+            </span>
+            {% endif %}
+          </div>
+          {% endif %}
+        </header>
+        {% endif %}
+        <div class="post-body">
+          {{ content }}
+        </div>
+      </article>
+    </main>
+  </div>
+  <script>
+    (function() {
+      var toggle = document.getElementById('mobileToggle');
+      var sidebar = document.getElementById('sidebar');
+      var overlay = document.getElementById('sidebarOverlay');
+      if (toggle && sidebar && overlay) {
+        toggle.addEventListener('click', function() {
+          sidebar.classList.toggle('open');
+          overlay.classList.toggle('visible');
+        });
+        overlay.addEventListener('click', function() {
+          sidebar.classList.remove('open');
+          overlay.classList.remove('visible');
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

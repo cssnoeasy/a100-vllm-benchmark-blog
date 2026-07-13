@@ -1,0 +1,72 @@
+/* Inline code */
+:not(pre) > code {
+  background: var(--code-inline-bg);
+  color: var(--code-inline);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+a code {
+  color: inherit;
+}
+
+/* Code blocks */
+pre {
+  margin: 1.5rem 0;
+  background: var(--code-bg);
+  border: 1px solid var(--code-border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+pre code {
+  display: block;
+  padding: 1.25rem 1.5rem;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.55;
+  color: var(--body-text);
+}
+
+pre::-webkit-scrollbar {
+  height: 6px;
+}
+
+pre::-webkit-scrollbar-thumb {
+  background: var(--table-border);
+  border-radius: 3px;
+}
+
+/* Language label */
+pre.highlight {
+  position: relative;
+}
+
+pre.highlight::before {
+  content: attr(data-lang);
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.2rem 0.75rem;
+  font-size: 0.7rem;
+  font-family: var(--font-sans);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--meta-text);
+  background: var(--table-header-bg);
+  border-radius: 0 6px 0 6px;
+}
+
+/* Highlighted lines */
+.highlight .hll {
+  background: var(--code-highlight-bg);
+  display: block;
+  margin: 0 -1.5rem;
+  padding: 0 1.5rem;
+}

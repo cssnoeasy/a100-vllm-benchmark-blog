@@ -1,0 +1,118 @@
+.sidebar {
+  background: var(--sidebar-bg);
+  color: var(--sidebar-text);
+  display: flex;
+  flex-direction: column;
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: var(--sidebar-border);
+  border-radius: 2px;
+}
+
+.sidebar-header {
+  padding: 1.5rem 1.25rem 1rem;
+  border-bottom: 1px solid var(--sidebar-border);
+}
+
+.sidebar-title {
+  display: block;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--sidebar-header-text);
+  text-decoration: none;
+  letter-spacing: 0.01em;
+}
+
+.sidebar-title:hover {
+  color: var(--sidebar-active-text);
+}
+
+.sidebar-subtitle {
+  margin-top: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--sidebar-text-muted);
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 0.75rem 0;
+  overflow-y: auto;
+}
+
+.nav-item {
+  display: block;
+  padding: 0.45rem 1.25rem;
+  color: var(--sidebar-text);
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: all 0.15s ease;
+  font-size: 0.875rem;
+}
+
+.nav-item:hover {
+  background: var(--sidebar-hover-bg);
+  color: var(--sidebar-active-text);
+}
+
+.nav-item.active {
+  background: var(--sidebar-active-bg);
+  color: var(--sidebar-active-text);
+  border-left-color: var(--sidebar-active-text);
+  font-weight: 600;
+}
+
+.nav-item--top {
+  padding: 0.55rem 1.25rem;
+  font-weight: 500;
+  border-bottom: 1px solid var(--sidebar-border);
+}
+
+/* Collapsible groups */
+.nav-group {
+  margin: 0.25rem 0;
+}
+
+.nav-group-title {
+  display: block;
+  padding: 0.55rem 1.25rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--sidebar-text-muted);
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s ease;
+}
+
+.nav-group-title:hover {
+  color: var(--sidebar-active-text);
+}
+
+.nav-group-title::marker {
+  font-size: 0.7rem;
+}
+
+.nav-group-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-group-items .nav-item {
+  padding-left: 2rem;
+}
+
+.sidebar-footer {
+  padding: 1rem 1.25rem;
+  border-top: 1px solid var(--sidebar-border);
+  font-size: 0.72rem;
+  color: var(--sidebar-text-muted);
+}
