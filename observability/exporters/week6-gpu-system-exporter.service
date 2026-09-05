@@ -1,0 +1,14 @@
+[Unit]
+Description=Week6 GPU and System Prometheus Exporter
+After=network.target
+
+[Service]
+Type=simple
+User=<service-user>
+WorkingDirectory=/opt/llm-serving-platform
+ExecStart=/usr/bin/env python3 /opt/llm-serving-platform/observability/exporters/week6_gpu_system_exporter.py --host 127.0.0.1 --port 9400
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

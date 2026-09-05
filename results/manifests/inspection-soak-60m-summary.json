@@ -1,0 +1,80 @@
+{
+  "started_at": "2026-08-03T09:46:42+00:00",
+  "finished_at": "2026-08-03T10:46:44+00:00",
+  "elapsed_seconds": 3601.994,
+  "total_requests": 1725,
+  "successful_requests": 1725,
+  "failed_requests": 0,
+  "success_rate": 1.0,
+  "business_parse_rate": 1.0,
+  "requests_per_second": 0.478901,
+  "status_counts": {
+    "success": 1725
+  },
+  "scenario_counts": {
+    "fault_diagnosis": 432,
+    "hazard_decision": 945,
+    "inspection_summary": 262,
+    "invalid_or_edge": 86
+  },
+  "scenario_success_counts": {
+    "fault_diagnosis": 432,
+    "hazard_decision": 945,
+    "inspection_summary": 262,
+    "invalid_or_edge": 86
+  },
+  "error_counts": {},
+  "e2e_latency_ms": {
+    "count": 1725,
+    "mean": 1446.474,
+    "p50": 412.768,
+    "p95": 5684.295,
+    "p99": 5840.389,
+    "max": 5917.483
+  },
+  "ttft_ms": {
+    "count": 1725,
+    "mean": 86.576,
+    "p50": 81.492,
+    "p95": 115.697,
+    "p99": 169.788,
+    "max": 1297.758
+  },
+  "input_tokens": {
+    "count": 1725,
+    "mean": 111.382,
+    "p50": 101.0,
+    "p95": 160.0,
+    "p99": 185.0,
+    "max": 185.0
+  },
+  "output_tokens": {
+    "count": 1725,
+    "mean": 124.105,
+    "p50": 31.0,
+    "p95": 509.8,
+    "p99": 512.0,
+    "max": 512.0
+  },
+  "quality_gate": {
+    "passed": true,
+    "checks": {
+      "min_success_rate": {
+        "actual": 1.0,
+        "threshold": 0.99,
+        "passed": true
+      },
+      "min_business_parse_rate": {
+        "actual": 1.0,
+        "threshold": 0.99,
+        "passed": true
+      },
+      "max_p99_e2e_ms": {
+        "actual": 5840.389,
+        "threshold": 30000.0,
+        "passed": true
+      }
+    }
+  },
+  "interrupted": false
+}

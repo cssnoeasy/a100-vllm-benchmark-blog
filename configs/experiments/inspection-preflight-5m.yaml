@@ -1,0 +1,30 @@
+{
+  "run_name": "week7_inspection_preflight_5m",
+  "server_role": "direct_vllm",
+  "base_url": "http://127.0.0.1:8000/v1",
+  "api_key": "",
+  "model": "Qwen2.5-7B-Instruct",
+  "scenarios_file": "../scenarios.jsonl",
+  "output_root": "../results",
+  "duration_seconds": 300,
+  "max_requests": 0,
+  "request_rate": 0.5,
+  "max_concurrency": 2,
+  "timeout_seconds": 90,
+  "stream": true,
+  "seed": 20260803,
+  "selection_strategy": "weighted_random",
+  "temperature": 0.1,
+  "max_tokens": 512,
+  "quality_gates": {
+    "min_success_rate": 0.99,
+    "min_business_parse_rate": 0.99,
+    "max_p99_e2e_ms": 30000
+  },
+  "scenario_weights": {
+    "hazard_decision": 0.55,
+    "fault_diagnosis": 0.25,
+    "inspection_summary": 0.15,
+    "invalid_or_edge": 0.05
+  }
+}

@@ -1,0 +1,6 @@
+public_copy_note: Historical environment manifest. Machine-specific paths and hostname were redacted for the public project copy.
+captured_at: 2026-08-03T09:46:42.522+00:00
+hostname: <redacted-windows-host>
+platform: Windows-11-10.0.26200-SP0
+python: 3.12.4 (tags/v3.12.4:8e8a4ba, Jun  6 2024, 19:30:16) [MSC v.1940 64 bit (AMD64)]
+executable: <python-executable>
