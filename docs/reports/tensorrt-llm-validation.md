@@ -1,3 +1,6 @@
+---
+---
+
 # TensorRT-LLM 从基础部署到 A100 性能验证：Qwen3-32B 的一次可复盘实践
 
 > 本文记录一次范围受控的 TensorRT-LLM 1.2.1 学习与验证：在 A100 单卡上部署 Qwen3-32B BF16，完成服务准入、统一短负载压测，并与 vLLM 做同模型、同精度、同负载的基础参考对照。本次实际执行的是 TensorRT-LLM 1.2.1 的 **PyTorch backend** 路径；传统 serialized TensorRT engine 路径已经完成兼容性排查后停止，不属于 Qwen3-32B 当前官方实验路线。

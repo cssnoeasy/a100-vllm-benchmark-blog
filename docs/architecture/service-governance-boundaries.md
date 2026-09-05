@@ -1,3 +1,6 @@
+---
+---
+
 # 服务化架构与能力边界
 
 **状态：** 架构整理与有限工程验证  
@@ -54,6 +57,6 @@
 
 ## 6. 相关材料
 
-- [系统总览](system-overview.md)
-- [受控过载与进程恢复复盘](../../incident-reviews/overload-and-process-recovery.md)
-- [复现与安全手册](../runbooks/reproduction-and-security.md)
+- [系统总览](system-overview.html)
+- [受控过载与进程恢复复盘](../../incident-reviews/overload-and-process-recovery.html)
+- [复现与安全手册](../runbooks/reproduction-and-security.html)

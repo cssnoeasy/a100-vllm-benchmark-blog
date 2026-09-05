@@ -1,3 +1,6 @@
+---
+---
+
 # 从 GB10 自行量化到 A100 部署：Qwen3-32B 四路径对比
 
 这篇文章记录一次完整的 Qwen3-32B 量化工程实验：先在 NVIDIA GB10 上使用公开 WikiText-2 校准集完成 W4A16 GPTQ 后训练量化，再把 18G 量化产物部署到单张 A100 80GB，最后与 BF16、BF16 + FP8 KV Cache、官方 Qwen3-32B-AWQ 使用同一套 vLLM runner 做资源和服务性能对比。

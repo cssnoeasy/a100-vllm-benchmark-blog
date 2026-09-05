@@ -1,3 +1,6 @@
+---
+---
+
 # 推理部署优化结果总览
 
 > 证据等级：A（TP1/TP2 与 A100 量化正式实验）/ B（服务工程验证）/ C（框架选型和异构平台扩展）
@@ -31,7 +34,7 @@
 - **反例**：长输入短输出中并发中，TP2 的 TTFT p50/p95 分别上升 5.43%/5.29%；短负载的 TPOT p99 上升 59.93%。首轮约 8 秒 TTFT p99 异常保留为未证实问题，不归因于 NCCL、NUMA 或任意单一因素。
 - **工程判断**：并行度应由目标负载和 SLO 选择。重负载可用 TP2 换取绝对吞吐和尾延迟收益；交互式轻负载需要额外观测尾延迟，并与单卡策略共同评估。
 
-完整条件、逐轮结果和异常审计见：[双 A100 TP1 vs TP2 正式基线](a100-tp1-vs-tp2-formal-baseline.md)。
+完整条件、逐轮结果和异常审计见：[双 A100 TP1 vs TP2 正式基线](../../a100-vllm-tp1-vs-tp2-baseline/)。
 
 ## 3. 精度与容量策略：不能只展示显存节省
 
@@ -46,7 +49,7 @@
 
 这里的核心结论不是“INT4 一定更快”。self W4A16 在此闭环并发负载中比 BF16 更快，但 c4/c8 下官方 AWQ 更高；资源接近也不等于质量相同。合理的部署流程是先以业务质量门禁划定可接受精度，再在该范围内用 SLO 阶梯确定容量。
 
-完整参数、质量分歧和容量边界见：[A100 量化与容量规划](a100-quantization-capacity.md)。
+完整参数、质量分歧和容量边界见：[A100 量化与容量规划](a100-quantization-capacity.html)。
 
 ## 4. 让优化结论可用：工程化证据
 
@@ -56,10 +59,10 @@
 
 相关证据入口：
 
-- [Benchmark 工程化与已完成特性验证](benchmark-engineering-results.md)
-- [服务化边界](../architecture/service-governance-boundaries.md)
-- [过载与进程恢复复盘](../../incident-reviews/overload-and-process-recovery.md)
-- [60 分钟离线巡检回放](inspection-replay-60m.md)
+- [Benchmark 工程化与已完成特性验证](benchmark-engineering-results.html)
+- [服务化边界](../architecture/service-governance-boundaries.html)
+- [过载与进程恢复复盘](../../incident-reviews/overload-and-process-recovery.html)
+- [60 分钟离线巡检回放](inspection-replay-60m.html)
 
 ## 5. 扩展验证的正确位置
 

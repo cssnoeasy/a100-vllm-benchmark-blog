@@ -1,3 +1,6 @@
+---
+---
+
 # 第 7 周 60 分钟巡检回放摘要
 
 ## 运行范围
@@ -40,4 +43,4 @@ TTFT 只记录流式响应的首 token 等待时间。E2E 为完整请求耗时�
 - `min_business_parse_rate`：通过，实际值 `1.0`，阈值 `0.99`。
 - `max_p99_e2e_ms`：通过，实际值 `5840.389`，阈值 `30000.0`。
 
-完整实验范围、脚本和局限见 [`docs/reports/inspection-replay-60m.md`](../../docs/reports/inspection-replay-60m.md)。
+完整实验范围、脚本和局限见 [`docs/reports/inspection-replay-60m.md`](../../docs/reports/inspection-replay-60m.html)。

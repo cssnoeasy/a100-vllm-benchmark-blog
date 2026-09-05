@@ -1,3 +1,6 @@
+---
+---
+
 # Week6 阶段 B 操作手册：Prometheus、Grafana、过载与进程恢复
 
 本文面向受控 Linux GPU 实验环境中的实际操作，不适用于 Windows 本地目录直接执行。公开仓库不记录远程主机、账户或远程访问命令；先通过组织批准的安全访问方式进入目标环境，再在项目根目录执行以下检查。涉及进程退出的步骤有破坏性，只在确认没有业务流量时执行。
@@ -230,4 +233,4 @@ promtool check config observability/prometheus/prometheus.yml
 find . -type d -name '__pycache__' -print -exec rm -rf -- {} +
 ```
 
-本手册记录的是第六周阶段 B 的操作范围；截至该阶段结束时，至少 60 分钟真实业务长稳尚未执行。后续第七周已另行完成 [60 分钟离线巡检文本推理回放](inspection-replay-60m.md)，它不包含真实业务链路，也不改变本手册中 Smoke、overload 和 recovery 的证据范围。后续若执行真实业务长稳，应另建结果目录和报告，不覆盖本周证据。
+本手册记录的是第六周阶段 B 的操作范围；截至该阶段结束时，至少 60 分钟真实业务长稳尚未执行。后续第七周已另行完成 [60 分钟离线巡检文本推理回放](inspection-replay-60m.html)，它不包含真实业务链路，也不改变本手册中 Smoke、overload 和 recovery 的证据范围。后续若执行真实业务长稳，应另建结果目录和报告，不覆盖本周证据。

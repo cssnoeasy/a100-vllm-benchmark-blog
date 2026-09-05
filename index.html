@@ -37,7 +37,7 @@
       <main id="content" class="content">
         <header class="topbar">
           <p>项目主页 / 推理部署工程记录</p>
-          <a href="README.md">阅读项目 README <span aria-hidden="true">→</span></a>
+          <a href="https://github.com/cssnoeasy/a100-vllm-benchmark-blog/blob/main/README.md" target="_blank" rel="noreferrer">阅读项目 README <span aria-hidden="true">→</span></a>
         </header>
 
         <article>
@@ -46,8 +46,8 @@
             <h1>从双 A100 部署，到可量化的推理优化</h1>
             <p class="lead">一个面向大模型推理部署的工程项目：将模型部署、受控基准、并行与量化选型、性能容量、质量回归、运行观测和故障恢复放进同一条可审查的链路。</p>
             <div class="intro-actions">
-              <a class="button primary" href="docs/project-plan.md">查看项目总线 <span aria-hidden="true">→</span></a>
-              <a class="button secondary" href="docs/articles/a100-inference-experiment.md">阅读主文章</a>
+              <a class="button primary" href="docs/project-plan.html">查看项目总线 <span aria-hidden="true">→</span></a>
+              <a class="button secondary" href="docs/articles/a100-inference-experiment.html">阅读主文章</a>
             </div>
           </section>
 
@@ -77,7 +77,7 @@
                 </tbody>
               </table>
             </div>
-            <p class="reading-link"><a href="docs/reports/a100-tp1-vs-tp2-formal-baseline.md">阅读双 A100 TP1 vs TP2 正式基线 <span aria-hidden="true">→</span></a></p>
+            <p class="reading-link"><a href="a100-vllm-tp1-vs-tp2-baseline/">阅读双 A100 TP1 vs TP2 正式基线 <span aria-hidden="true">→</span></a></p>
           </section>
 
           <section id="optimization" class="section section-anchor">
@@ -93,7 +93,7 @@
               <div class="result-card amber"><span class="metric">-6.0 pt</span><strong>固定 500 题质量</strong><p>self W4A16 相对 BF16 的代价。</p></div>
             </div>
             <aside class="callout"><strong>部署结论不是“量化越小越好”。</strong> self W4A16 在指定 SLO 下最高已验证 request-rate 为 1.3 req/s，BF16 为 0.6 req/s；但它的固定题集质量从 83.60% 降至 77.60%。容量收益必须与业务质量门禁一起判断。</aside>
-            <p class="reading-link"><a href="docs/reports/deployment-optimization-summary.md">查看部署优化结果总览 <span aria-hidden="true">→</span></a></p>
+            <p class="reading-link"><a href="docs/reports/deployment-optimization-summary.html">查看部署优化结果总览 <span aria-hidden="true">→</span></a></p>
           </section>
 
           <section id="reliability" class="section section-anchor">
@@ -107,7 +107,7 @@
               <div><span>诊断</span><p>校验失败、状态不完整和关键指标缺失均保留为可读记录。</p></div>
               <div><span>恢复</span><p>记录受控过载后的指标回落，以及推理进程退出后的重新 ready / smoke。</p></div>
             </div>
-            <p class="reading-link"><a href="docs/reports/04_Week6阶段B_PrometheusGrafana过载与恢复记录.md">查看 Prometheus / Grafana 与恢复记录 <span aria-hidden="true">→</span></a></p>
+            <p class="reading-link"><a href="docs/reports/04_Week6阶段B_PrometheusGrafana过载与恢复记录.html">查看 Prometheus / Grafana 与恢复记录 <span aria-hidden="true">→</span></a></p>
           </section>
 
           <section id="documents" class="section section-anchor">
@@ -116,12 +116,12 @@
               <h2>按问题阅读项目材料</h2>
             </div>
             <div class="document-grid">
-              <a href="docs/project-plan.md"><span>项目总线</span><strong>完整逻辑与技术决策</strong><small>项目问题、阶段、结果与后续计划</small></a>
-              <a href="docs/articles/a100-inference-experiment.md"><span>主文章</span><strong>A100 推理部署实验</strong><small>从 TP 对照到容量优化的过程</small></a>
-              <a href="docs/reports/a100-tp1-vs-tp2-formal-baseline.md"><span>A 级证据</span><strong>TP1 vs TP2 正式基线</strong><small>18 轮受控实验与尾延迟审计</small></a>
-              <a href="docs/reports/a100-quantization-capacity.md"><span>A 级证据</span><strong>量化与容量规划</strong><small>显存、SLO 和质量的完整对照</small></a>
-              <a href="docs/reports/benchmark-engineering-results.md"><span>B 级证据</span><strong>Benchmark 工程化</strong><small>runner、校验、诊断与质量门禁</small></a>
-              <a href="docs/reports/inspection-replay-60m.md"><span>B 级证据</span><strong>60 分钟离线巡检回放</strong><small>业务形态输入、回放与归档</small></a>
+              <a href="docs/project-plan.html"><span>项目总线</span><strong>完整逻辑与技术决策</strong><small>项目问题、阶段、结果与后续计划</small></a>
+              <a href="docs/articles/a100-inference-experiment.html"><span>主文章</span><strong>A100 推理部署实验</strong><small>从 TP 对照到容量优化的过程</small></a>
+              <a href="a100-vllm-tp1-vs-tp2-baseline/"><span>A 级证据</span><strong>TP1 vs TP2 正式基线</strong><small>18 轮受控实验与尾延迟审计</small></a>
+              <a href="docs/reports/a100-quantization-capacity.html"><span>A 级证据</span><strong>量化与容量规划</strong><small>显存、SLO 和质量的完整对照</small></a>
+              <a href="docs/reports/benchmark-engineering-results.html"><span>B 级证据</span><strong>Benchmark 工程化</strong><small>runner、校验、诊断与质量门禁</small></a>
+              <a href="docs/reports/inspection-replay-60m.html"><span>B 级证据</span><strong>60 分钟离线巡检回放</strong><small>业务形态输入、回放与归档</small></a>
             </div>
           </section>
 
@@ -132,17 +132,17 @@
             </div>
             <p class="supplementary-intro">以下材料记录主性能线之外已经完成的工程工作：服务化架构、异构硬件部署、框架准入、模型适配，以及并行通信和运行恢复排查。它们补全项目的工程广度；模型、硬件、权重格式和负载不同，指标分别阅读，不做横向性能排名。</p>
             <div class="supplementary-grid">
-              <a href="docs/architecture/service-governance-boundaries.md"><span>服务架构</span><strong>服务化架构与治理边界</strong><small>调用方、网关与推理引擎的职责拆分，以及 runner 和就绪检查记录。</small></a>
-              <a href="docs/reports/gb10-llama-cpp-validation.md"><span>异构部署</span><strong>GB10 ARM64 上的 llama.cpp</strong><small>GGUF 编译、服务启动、冷热请求、并发阶梯和连续请求验证。</small></a>
-              <a href="docs/reports/tensorrt-llm-validation.md"><span>框架准入</span><strong>TensorRT-LLM 基础验证</strong><small>Qwen3 PyTorch backend 准入与统一短负载三轮对照。</small></a>
-              <a href="docs/reports/qlora-industrial-work-order-extension.md"><span>模型适配</span><strong>QLoRA 工单训练与离线评测</strong><small>从合成结构化事实到工单 schema 的训练迭代和硬案例评测。</small></a>
-              <a href="docs/experimental-notes/nccl-numa-observations.md"><span>系统排查</span><strong>并行与通信排查笔记</strong><small>TP / PP、显存预分配、NCCL / NUMA 与 KV Cache 的检查记录。</small></a>
-              <a href="docs/reports/inspection-replay-60m.md"><span>运行验证</span><strong>观测、恢复与业务回放</strong><small>指标采集、受控过载、进程恢复和 60 分钟离线巡检文本回放。</small></a>
+              <a href="docs/architecture/service-governance-boundaries.html"><span>服务架构</span><strong>服务化架构与治理边界</strong><small>调用方、网关与推理引擎的职责拆分，以及 runner 和就绪检查记录。</small></a>
+              <a href="docs/reports/gb10-llama-cpp-validation.html"><span>异构部署</span><strong>GB10 ARM64 上的 llama.cpp</strong><small>GGUF 编译、服务启动、冷热请求、并发阶梯和连续请求验证。</small></a>
+              <a href="docs/reports/tensorrt-llm-validation.html"><span>框架准入</span><strong>TensorRT-LLM 基础验证</strong><small>Qwen3 PyTorch backend 准入与统一短负载三轮对照。</small></a>
+              <a href="docs/reports/qlora-industrial-work-order-extension.html"><span>模型适配</span><strong>QLoRA 工单训练与离线评测</strong><small>从合成结构化事实到工单 schema 的训练迭代和硬案例评测。</small></a>
+              <a href="docs/experimental-notes/nccl-numa-observations.html"><span>系统排查</span><strong>并行与通信排查笔记</strong><small>TP / PP、显存预分配、NCCL / NUMA 与 KV Cache 的检查记录。</small></a>
+              <a href="docs/reports/inspection-replay-60m.html"><span>运行验证</span><strong>观测、恢复与业务回放</strong><small>指标采集、受控过载、进程恢复和 60 分钟离线巡检文本回放。</small></a>
             </div>
           </section>
         </article>
 
-        <footer>LLM 推理服务平台 · 已完成实验与工程记录 · <a href="SOURCE_MANIFEST.md">公开范围说明</a></footer>
+        <footer>LLM 推理服务平台 · 已完成实验与工程记录 · <a href="https://github.com/cssnoeasy/a100-vllm-benchmark-blog/blob/main/SOURCE_MANIFEST.md" target="_blank" rel="noreferrer">公开范围说明</a></footer>
       </main>
 
       <aside class="facts" aria-label="项目摘要">

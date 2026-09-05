@@ -1,0 +1,12 @@
+title: LLM 推理服务平台
+description: 双 A100 部署、性能基线、量化容量与可观测性工程记录。
+baseurl: /a100-vllm-benchmark-blog
+markdown: kramdown
+highlighter: rouge
+
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: document

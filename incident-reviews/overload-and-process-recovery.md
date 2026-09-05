@@ -1,3 +1,6 @@
+---
+---
+
 # 受控过载与进程恢复复盘
 
 **状态：** 已完成的受控工程验证  
@@ -43,4 +46,4 @@
 
 ## 6. 来源
 
-- [第 6 周过载与恢复记录](../docs/reports/04_Week6阶段B_PrometheusGrafana过载与恢复记录.md)
+- [第 6 周过载与恢复记录](../docs/reports/04_Week6阶段B_PrometheusGrafana过载与恢复记录.html)

@@ -1,3 +1,6 @@
+---
+---
+
 # 巡检场景 60 分钟离线文本推理回放
 
 **状态：** 已完成的离线业务回放  
@@ -43,8 +46,8 @@
 
 ## 5. 复现与溯源
 
-- [Replay client and scenario contract](../../scripts/workloads/inspection-replay/README.md)
-- [Published result summary](../../results/published/inspection-soak-60m-summary.md)
+- [Replay client and scenario contract](../../scripts/workloads/inspection-replay/README.html)
+- [Published result summary](../../results/published/inspection-soak-60m-summary.html)
 - [Structured summary manifest](../../results/manifests/inspection-soak-60m-summary.json)
 - [Soak configuration](../../configs/experiments/inspection-soak-60m.yaml)
 

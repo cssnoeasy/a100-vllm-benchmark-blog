@@ -1,3 +1,6 @@
+---
+---
+
 # 项目总线与技术决策
 
 > 项目定位：大模型推理部署与性能优化工程项目。本文只组织已经完成的工作；计划项会明确标注，不把设计写成成果。
@@ -34,13 +37,13 @@
 
 | 阶段 | 做了什么 | 已有结果 | 证据与边界 |
 | --- | --- | --- | --- |
-| 1. 部署与基线 | 部署 Qwen2.5-7B-Instruct 与 vLLM，冻结模型、硬件、并行策略和三类合成负载 | 建立 TP1 / TP2 可重复的比较基础 | [正式基线](reports/a100-tp1-vs-tp2-formal-baseline.md)，A 级 |
+| 1. 部署与基线 | 部署 Qwen2.5-7B-Instruct 与 vLLM，冻结模型、硬件、并行策略和三类合成负载 | 建立 TP1 / TP2 可重复的比较基础 | [正式基线](../a100-vllm-tp1-vs-tp2-baseline/)，A 级 |
 | 2. 并行策略 | 在双 A100 80GB PCIe、无 NVLink、跨 NUMA 条件下，将 TP1 / TP2 各运行三轮 | TP2 绝对请求吞吐提高 33.42% 至 44.71%；重负载 TPOT p99 降低 31.15%，E2E p99 降低 28.37% | TP2 使用两张 GPU；轻负载尾延迟有反例，不能声称单位 GPU 效率或双卡全面更优 |
-| 3. 参数与通信排查 | 对 `gpu-memory-utilization`、TP / PP、NCCL / NUMA、KV Cache 分配做补充记录 | 0.75 在指定负载达到已观测性能平台；TP2 在当时两组负载中吞吐高于 PP2 | [补充实验](reports/report-index.md) 为 B/C 级，未把单轮或未剖析现象写成通用结论 |
+| 3. 参数与通信排查 | 对 `gpu-memory-utilization`、TP / PP、NCCL / NUMA、KV Cache 分配做补充记录 | 0.75 在指定负载达到已观测性能平台；TP2 在当时两组负载中吞吐高于 PP2 | [补充实验](reports/report-index.html) 为 B/C 级，未把单轮或未剖析现象写成通用结论 |
 | 4. 容量与精度 | 在单 A100 的 Qwen3-32B 专题中比较 BF16、FP8 KV Cache、官方 AWQ 与 self W4A16 GPTQ 的显存、KV 容量、SLO 和固定质量集 | self W4A16 模型加载显存降低约 70.5%，GPU KV token 提高约 5.49 倍；SLO 下最高已验证 request-rate 从 0.6 提高到 1.3 req/s | 与 Qwen2.5-7B 的 TP 实验模型不同，不能做跨模型数值比较；self W4A16 固定 500 题质量下降 6.0 个百分点 |
-| 5. Benchmark 工程化 | 实现配置驱动 runner、readiness 检查、运行 ID、校验、汇总、诊断与质量门禁 | 结果可保存运行状态、失败原因和指标完整性，避免只保留成功样本 | [工程化报告](reports/benchmark-engineering-results.md)，B 级；有限特性对照不作默认配置建议 |
-| 6. 运行观测与恢复 | 接入 Prometheus、Grafana 和 GPU/System exporter；执行受控过载与进程退出后的重新 ready / smoke | 记录压力后指标回落与进程恢复后的服务就绪 | [过载与恢复](reports/04_Week6阶段B_PrometheusGrafana过载与恢复记录.md)，B 级，不等同高可用或 OOM 自动恢复 |
-| 7. 业务形态验证 | 将巡检场景整理为脱敏的文本推理回放并运行 60 分钟 | 验证场景数据、回放客户端、结果归档与质量门禁链路 | [巡检回放](reports/inspection-replay-60m.md)，B 级，是离线文本回放，不是机器人端到端 |
+| 5. Benchmark 工程化 | 实现配置驱动 runner、readiness 检查、运行 ID、校验、汇总、诊断与质量门禁 | 结果可保存运行状态、失败原因和指标完整性，避免只保留成功样本 | [工程化报告](reports/benchmark-engineering-results.html)，B 级；有限特性对照不作默认配置建议 |
+| 6. 运行观测与恢复 | 接入 Prometheus、Grafana 和 GPU/System exporter；执行受控过载与进程退出后的重新 ready / smoke | 记录压力后指标回落与进程恢复后的服务就绪 | [过载与恢复](reports/04_Week6阶段B_PrometheusGrafana过载与恢复记录.html)，B 级，不等同高可用或 OOM 自动恢复 |
+| 7. 业务形态验证 | 将巡检场景整理为脱敏的文本推理回放并运行 60 分钟 | 验证场景数据、回放客户端、结果归档与质量门禁链路 | [巡检回放](reports/inspection-replay-60m.html)，B 级，是离线文本回放，不是机器人端到端 |
 | 8. 框架准入、异构部署与模型适配 | TensorRT-LLM 1.2.1 PyTorch backend 在单 A100、Qwen3-32B 的三轮短负载对照；GB10 ARM64 + llama.cpp GGUF 的编译、冷热、并发与约 20 分钟连续请求；QLoRA 合成工单的训练与离线评测；服务化架构与直连 runner 整理 | TensorRT-LLM 与 vLLM 的平均输出吞吐差约 1.25%，作为固定短负载选型参考；GB10 完成独立部署链路；QLoRA v3 留出合成文档 all-core 48/48、硬案例 6/8 | 不与 A100/vLLM 主线跨硬件、模型或格式排名；网关完整治理未验证；QLoRA 仍有 2 个严重 OCR 硬案例未通过，且不构成在线 adapter serving 结论 |
 
 ## 5. 核心结论与技术说明
@@ -63,11 +66,11 @@
 
 对外展示优先阅读以下五份材料：
 
-1. [A100 推理部署实验主文章](articles/a100-inference-experiment.md)：从问题到工程判断的通读入口。
-2. [部署优化结果总览](reports/deployment-optimization-summary.md)：把优化动作、收益和代价放在一张决策表中。
-3. [TP1 vs TP2 正式基线](reports/a100-tp1-vs-tp2-formal-baseline.md)：最强性能证据。
-4. [A100 量化与容量规划](reports/a100-quantization-capacity.md)：资源、SLO 与质量的完整权衡。
-5. [Benchmark 工程化与已完成特性验证](reports/benchmark-engineering-results.md)：说明结果不是手工摘取的单次输出。
+1. [A100 推理部署实验主文章](articles/a100-inference-experiment.html)：从问题到工程判断的通读入口。
+2. [部署优化结果总览](reports/deployment-optimization-summary.html)：把优化动作、收益和代价放在一张决策表中。
+3. [TP1 vs TP2 正式基线](../a100-vllm-tp1-vs-tp2-baseline/)：最强性能证据。
+4. [A100 量化与容量规划](reports/a100-quantization-capacity.html)：资源、SLO 与质量的完整权衡。
+5. [Benchmark 工程化与已完成特性验证](reports/benchmark-engineering-results.html)：说明结果不是手工摘取的单次输出。
 
 观测、故障恢复、离线回放和扩展验证放在后续阅读，目的是补充工程深度，而不分散主性能结论。
 

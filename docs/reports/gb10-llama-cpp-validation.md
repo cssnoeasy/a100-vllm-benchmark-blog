@@ -1,3 +1,6 @@
+---
+---
+
 # GB10 上 llama.cpp 独立部署验证
 
 ## 1. 问题与边界
@@ -119,6 +122,6 @@
 
 ## 7. 复现资料与剩余缺口
 
-原始已完成资料保留于 `补充任务/DGX spark实验/llama.cpp/`，主项目副本的迁入范围见 [`SOURCE_MANIFEST.md`](../../SOURCE_MANIFEST.md)。公开复现需自行准备同一 GGUF 文件，并以其 SHA256 核验模型身份；所有本地路径应使用 `${MODEL_PATH}`、`${RESULT_DIR}` 等占位符。
+原始已完成资料保留于 `补充任务/DGX spark实验/llama.cpp/`，主项目副本的迁入范围见 [`SOURCE_MANIFEST.md`](../../SOURCE_MANIFEST.html)。公开复现需自行准备同一 GGUF 文件，并以其 SHA256 核验模型身份；所有本地路径应使用 `${MODEL_PATH}`、`${RESULT_DIR}` 等占位符。
 
 尚未补齐的严格复现信息只有 `llama.cpp` 源码 commit 或 release tag。它应被记录为复现缺口，而不是被补写成已完成实验。

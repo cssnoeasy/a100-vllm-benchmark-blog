@@ -1,3 +1,6 @@
+---
+---
+
 # 从 Transformer 到推理服务
 
 > 本文用于解释本项目的指标和工程选择。公式、机制和示意用于建立概念，不是本项目的实验结果；实验事实以各正式报告中的环境、负载和结果表为准。
@@ -101,4 +104,4 @@ KV Cache 占用与层数、KV 头数、head 维度、token 数、并发请求数
 3. 将吞吐、TTFT、TPOT、E2E 和成功率分开阅读，不用单一数字概括服务质量。
 4. 区分概念解释、工程验证和正式受控实验，不把有限观察扩大为通用结论。
 
-下一步可阅读 [系统总览](../architecture/system-overview.md)、[Benchmark 方法](../methodology/benchmark-methodology.md) 和 [双 A100 TP1/TP2 正式基线](../reports/a100-tp1-vs-tp2-formal-baseline.md)，将上述概念映射到本项目的具体结果。
+下一步可阅读 [系统总览](../architecture/system-overview.html)、[Benchmark 方法](../methodology/benchmark-methodology.html) 和 [双 A100 TP1/TP2 正式基线](../../a100-vllm-tp1-vs-tp2-baseline/)，将上述概念映射到本项目的具体结果。

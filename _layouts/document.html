@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="{{ page.description | default: site.description }}">
+    <title>{{ page.title | default: site.title }} | {{ site.title }}</title>
+    <link rel="stylesheet" href="{{ '/styles.css' | relative_url }}">
+    <link rel="stylesheet" href="{{ '/document.css' | relative_url }}">
+  </head>
+  <body class="document-body">
+    <a class="skip-link" href="#document-content">跳到正文</a>
+    <header class="document-topbar">
+      <a class="document-brand" href="{{ '/' | relative_url }}">
+        <span>LLM</span>
+        <strong>推理服务平台</strong>
+      </a>
+      <nav aria-label="文档导航">
+        <a href="{{ '/#documents' | relative_url }}">文档索引</a>
+        <a href="{{ '/docs/project-plan.html' | relative_url }}">项目总线</a>
+        <a href="https://github.com/cssnoeasy/a100-vllm-benchmark-blog" target="_blank" rel="noreferrer">GitHub 仓库</a>
+      </nav>
+    </header>
+    <main id="document-content" class="document-shell">
+      <a class="back-link" href="{{ '/' | relative_url }}">返回项目首页</a>
+      <article class="markdown-content">
+        {{ content }}
+      </article>
+    </main>
+    <footer class="document-footer">
+      LLM 推理服务平台 · <a href="https://github.com/cssnoeasy/a100-vllm-benchmark-blog/blob/main/SOURCE_MANIFEST.md" target="_blank" rel="noreferrer">公开范围说明</a>
+    </footer>
+  </body>
+</html>

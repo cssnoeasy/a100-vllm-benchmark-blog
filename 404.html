@@ -1,0 +1,38 @@
+---
+layout: null
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex">
+    <title>正在打开文档 | LLM 推理服务平台</title>
+    <link rel="stylesheet" href="{{ '/styles.css' | relative_url }}">
+    <link rel="stylesheet" href="{{ '/document.css' | relative_url }}">
+  </head>
+  <body class="document-body">
+    <main class="document-shell">
+      <article class="markdown-content">
+        <h1>页面未找到</h1>
+        <p id="message">正在返回项目首页。</p>
+        <p><a href="{{ '/' | relative_url }}">返回项目首页</a></p>
+      </article>
+    </main>
+    <script>
+      (function () {
+        var path = window.location.pathname;
+        if (/\.md$/i.test(path)) {
+          var legacyPaths = {
+            '/a100-vllm-benchmark-blog/docs/reports/a100-tp1-vs-tp2-formal-baseline.md':
+              '/a100-vllm-benchmark-blog/a100-vllm-tp1-vs-tp2-baseline/'
+          };
+          var target = legacyPaths[path] || path.replace(/\.md$/i, '.html');
+          target += window.location.search + window.location.hash;
+          document.getElementById('message').textContent = '正在打开排版后的文档页面。';
+          window.location.replace(target);
+        }
+      }());
+    </script>
+  </body>
+</html>

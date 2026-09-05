@@ -1,3 +1,6 @@
+---
+---
+
 # Benchmark 方法
 
 ## 1. 目标
@@ -14,7 +17,7 @@
 4. 运行前后采集 vLLM metrics、GPU 采样和服务日志；结束后保存 benchmark JSON、退出状态及结果清单。
 5. 汇总器校验字段完整性、成功请求数、缺失值、counter 增量和重复次数，再生成可供报告引用的聚合结果。
 
-这样保留的不是一张图或一行结论，而是可以回到配置、原始结果和运行状态核对的证据链。目录约定见 [数据与结果目录约定](data_schema.md)，工程实现与已完成验证见 [Benchmark 工程化与已完成特性验证](../reports/benchmark-engineering-results.md)。
+这样保留的不是一张图或一行结论，而是可以回到配置、原始结果和运行状态核对的证据链。目录约定见 [数据与结果目录约定](data_schema.html)，工程实现与已完成验证见 [Benchmark 工程化与已完成特性验证](../reports/benchmark-engineering-results.html)。
 
 ## 3. 指标口径
 
