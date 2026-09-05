@@ -1,6 +1,6 @@
 # Week6 阶段 B 操作手册：Prometheus、Grafana、过载与进程恢复
 
-本文面向受控环境中的实际操作。公开仓库不记录远程主机、账户或远程访问命令；先通过组织批准的安全访问方式进入目标环境，再在项目根目录执行以下检查。涉及进程退出的步骤有破坏性，只在确认没有业务流量时执行。
+本文面向受控 Linux GPU 实验环境中的实际操作，不适用于 Windows 本地目录直接执行。公开仓库不记录远程主机、账户或远程访问命令；先通过组织批准的安全访问方式进入目标环境，再在项目根目录执行以下检查。涉及进程退出的步骤有破坏性，只在确认没有业务流量时执行。
 
 ## 1. 日常健康检查
 
@@ -52,7 +52,7 @@ week6_gpu_system up
 
 ## 4. 配置变更流程
 
-仓库配置：`observability/prometheus/prometheus.yml`。活动配置：受控部署目录中的 Prometheus 配置。修改仓库文件不会自动生效。
+仓库配置：`observability/prometheus/prometheus.yml`。活动配置：受控 Linux 环境的 `/etc/prometheus/prometheus.yml`。`/etc`、`/var/lib`、systemd 与 `promtool` 均属于运行环境，不是仓库目录；修改仓库文件不会自动生效。
 
 安全流程：
 
@@ -107,10 +107,10 @@ nvidia-smi
 
 ## 6. 导入最终 Grafana Dashboard
 
-服务器文件：
+公开仓库文件：
 
 ```text
-<PROJECT_ROOT>/observability/grafana/dashboards/vllm_engineered_dashboard.json
+<PROJECT_ROOT>/observability/grafana/vllm_engineered_dashboard.json
 ```
 
 Windows 下载：
@@ -153,10 +153,10 @@ cd <PROJECT_ROOT>
 conda activate vllm_env
 ps -ef | grep 'vllm serve' | grep -v grep
 nvidia-smi
-python scripts/run_overload_probe.py
+python scripts/runner/run_overload_probe.py
 ```
 
-脚本依次执行 C=8 基线、C=48 高并发、C=8 恢复。查看：
+脚本依次执行 C=8 基线、C=48 高并发、C=8 恢复。原工程快照中的结果曾写入以下路径；当前公开副本未迁入该目录，实际重新运行时应以脚本生成的位置为准。查看：
 
 ```bash
 cat results/week6/overload_probe/overload_summary.md
@@ -173,10 +173,10 @@ cat results/week6/overload_probe/overload_summary.md
 ```bash
 cd <PROJECT_ROOT>
 conda activate vllm_env
-python scripts/run_process_exit_recovery_probe.py
+python scripts/runner/run_process_exit_recovery_probe.py
 ```
 
-查看证据：
+原工程快照中的结果曾写入以下路径；当前公开副本未迁入该目录，实际重新运行时应以脚本生成的位置为准。查看证据：
 
 ```bash
 cat results/week6/process_exit_recovery/process_exit_recovery_summary.md
@@ -225,9 +225,9 @@ Week6_Grafana_vLLM进程退出与恢复观测.png
 cd <PROJECT_ROOT>
 python -m compileall -q scripts observability/exporters
 for file in scripts/*.sh; do bash -n "$file" || exit 1; done
-python -m json.tool observability/grafana/dashboards/vllm_engineered_dashboard.json >/dev/null
+python -m json.tool observability/grafana/vllm_engineered_dashboard.json >/dev/null
 promtool check config observability/prometheus/prometheus.yml
 find . -type d -name '__pycache__' -print -exec rm -rf -- {} +
 ```
 
-至少 60 分钟业务长稳尚未执行。未来执行时应另建结果目录和报告，不覆盖本周 smoke、overload 和 recovery 证据。
+本手册记录的是第六周阶段 B 的操作范围；截至该阶段结束时，至少 60 分钟真实业务长稳尚未执行。后续第七周已另行完成 [60 分钟离线巡检文本推理回放](inspection-replay-60m.md)，它不包含真实业务链路，也不改变本手册中 Smoke、overload 和 recovery 的证据范围。后续若执行真实业务长稳，应另建结果目录和报告，不覆盖本周证据。

@@ -1,132 +1,168 @@
 <!doctype html>
 <html lang="zh-CN">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="大模型推理服务平台：A100 性能基线、量化容量规划与可观测性工程记录。">
-  <title>推理服务工程记录 | A100 vLLM Benchmark</title>
-  <link rel="stylesheet" href="styles.css">
-</head>
-<body>
-  <a class="skip-link" href="#main-content">跳到主要内容</a>
-  <header class="site-header">
-    <div class="header-inner">
-      <a class="brand" href="#top" aria-label="返回项目首页">
-        <span class="brand-mark">▦</span>
-        <span><strong>Inference Lab</strong><small>A100 · vLLM · Serving</small></span>
-      </a>
-      <nav class="top-nav" aria-label="主导航">
-        <a class="active" href="#overview">项目概览</a>
-        <a href="#evidence">实验结论</a>
-        <a href="#reports">报告索引</a>
-        <a href="#method">方法与边界</a>
-      </nav>
-      <div class="header-actions">
-        <button class="icon-button" id="theme-toggle" type="button" title="切换明暗主题" aria-label="切换明暗主题">☼</button>
-        <a class="github-button" href="https://github.com/cssnoeasy/a100-vllm-benchmark-blog" target="_blank" rel="noopener">GitHub ↗</a>
-        <button class="menu-button" id="menu-toggle" type="button" title="打开导航" aria-label="打开导航">☰</button>
-      </div>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="LLM 推理服务平台：双 A100 部署、性能基线、量化容量与可观测性工程记录。">
+    <title>LLM 推理服务平台</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <a class="skip-link" href="#content">跳到正文</a>
+    <div class="site-shell">
+      <aside class="sidebar" aria-label="项目导航">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">LLM</span>
+          <div>
+            <p class="brand-kicker">ENGINEERING NOTES</p>
+            <p class="brand-title">推理服务平台</p>
+          </div>
+        </div>
+
+        <nav class="nav-list" aria-label="页面目录">
+          <a class="nav-link active" href="#overview">项目总线</a>
+          <a class="nav-link" href="#baseline">部署与基线</a>
+          <a class="nav-link" href="#optimization">优化与量化</a>
+          <a class="nav-link" href="#reliability">观测与恢复</a>
+          <a class="nav-link" href="#documents">文档入口</a>
+          <a class="nav-link" href="#supplementary">补充材料</a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <p>vLLM · A100 · Benchmark</p>
+          <a href="https://github.com/cssnoeasy/a100-vllm-benchmark-blog" target="_blank" rel="noreferrer">查看 GitHub 仓库 <span aria-hidden="true">↗</span></a>
+        </div>
+      </aside>
+
+      <main id="content" class="content">
+        <header class="topbar">
+          <p>项目主页 / 推理部署工程记录</p>
+          <a href="README.md">阅读项目 README <span aria-hidden="true">→</span></a>
+        </header>
+
+        <article>
+          <section id="overview" class="intro section-anchor">
+            <p class="eyebrow">LLM INFERENCE SERVING PLATFORM</p>
+            <h1>从双 A100 部署，到可量化的推理优化</h1>
+            <p class="lead">一个面向大模型推理部署的工程项目：将模型部署、受控基准、并行与量化选型、性能容量、质量回归、运行观测和故障恢复放进同一条可审查的链路。</p>
+            <div class="intro-actions">
+              <a class="button primary" href="docs/project-plan.md">查看项目总线 <span aria-hidden="true">→</span></a>
+              <a class="button secondary" href="docs/articles/a100-inference-experiment.md">阅读主文章</a>
+            </div>
+          </section>
+
+          <section class="project-path" aria-label="项目逻辑主线">
+            <div class="path-step"><span>01</span><strong>冻结环境与负载</strong></div>
+            <div class="path-line" aria-hidden="true"></div>
+            <div class="path-step"><span>02</span><strong>TP1 / TP2 对照</strong></div>
+            <div class="path-line" aria-hidden="true"></div>
+            <div class="path-step"><span>03</span><strong>容量与质量取舍</strong></div>
+            <div class="path-line" aria-hidden="true"></div>
+            <div class="path-step"><span>04</span><strong>观测、恢复与回放</strong></div>
+          </section>
+
+          <section id="baseline" class="section section-anchor">
+            <div class="section-heading">
+              <p class="eyebrow">01 / DEPLOYMENT BASELINE</p>
+              <h2>不是先选配置，而是先建立对照</h2>
+            </div>
+            <p>主线基于双 NVIDIA A100 80GB PCIe，GPU 间无 NVLink、跨 NUMA 的拓扑，使用 Qwen2.5-7B-Instruct 与 vLLM 0.19.0。TP1 与 TP2 在三类固定合成负载下各重复三次，共 18 轮、1,800 个请求；指标同时覆盖吞吐、TTFT、TPOT、端到端延迟和运行状态。</p>
+            <div class="data-table-wrap">
+              <table>
+                <thead><tr><th>实验问题</th><th>做法</th><th>得到的工程判断</th></tr></thead>
+                <tbody>
+                  <tr><td>单卡还是双卡</td><td>TP1 / TP2 受控对照，三类负载各重复 3 次</td><td>TP2 绝对吞吐提高，但不把多卡写成默认答案</td></tr>
+                  <tr><td>轻负载尾延迟</td><td>记录 TTFT、TPOT、E2E 的 p50 / p95 / p99</td><td>发现反例后保留异常，不用平均吞吐掩盖</td></tr>
+                  <tr><td>配置是否可信</td><td>冻结环境、保存 run ID、原始结果、采样和校验记录</td><td>结论可回溯到条件、数据和汇总口径</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="reading-link"><a href="docs/reports/a100-tp1-vs-tp2-formal-baseline.md">阅读双 A100 TP1 vs TP2 正式基线 <span aria-hidden="true">→</span></a></p>
+          </section>
+
+          <section id="optimization" class="section section-anchor">
+            <div class="section-heading">
+              <p class="eyebrow">02 / OPTIMIZATION DECISIONS</p>
+              <h2>优化同时看资源、SLO 与质量</h2>
+            </div>
+            <p>量化专题使用单张 A100 上的 Qwen3-32B，与 TP1 / TP2 的 Qwen2.5-7B 主基线分开统计。专题将 BF16、FP8 KV Cache、官方 AWQ 与 self W4A16 GPTQ 放进统一矩阵：先测模型加载显存和 KV 容量，再用闭环并发和开环 SLO 阶梯测服务能力，最后用固定 500 题做质量回归。</p>
+            <div class="result-grid">
+              <div class="result-card teal"><span class="metric">+33.42% ~ +44.71%</span><strong>TP2 绝对请求吞吐</strong><p>三类受控负载相对 TP1 的变化。</p></div>
+              <div class="result-card blue"><span class="metric">-70.5%</span><strong>self W4A16 加载显存</strong><p>61.03 GiB 降至 18.03 GiB。</p></div>
+              <div class="result-card green"><span class="metric">5.49x</span><strong>GPU KV token 容量</strong><p>self W4A16 相对 BF16。</p></div>
+              <div class="result-card amber"><span class="metric">-6.0 pt</span><strong>固定 500 题质量</strong><p>self W4A16 相对 BF16 的代价。</p></div>
+            </div>
+            <aside class="callout"><strong>部署结论不是“量化越小越好”。</strong> self W4A16 在指定 SLO 下最高已验证 request-rate 为 1.3 req/s，BF16 为 0.6 req/s；但它的固定题集质量从 83.60% 降至 77.60%。容量收益必须与业务质量门禁一起判断。</aside>
+            <p class="reading-link"><a href="docs/reports/deployment-optimization-summary.md">查看部署优化结果总览 <span aria-hidden="true">→</span></a></p>
+          </section>
+
+          <section id="reliability" class="section section-anchor">
+            <div class="section-heading">
+              <p class="eyebrow">03 / OPERATIONS</p>
+              <h2>让性能结果进入可观察的服务链路</h2>
+            </div>
+            <p>除性能矩阵外，项目还保留配置驱动 runner、readiness 检查、结果校验、质量门禁、Prometheus、Grafana、GPU/System exporter、受控过载探针、进程退出恢复探针和 60 分钟离线巡检文本回放。</p>
+            <div class="capability-list">
+              <div><span>运行</span><p>启动检查、固定配置、run ID、指标采样和结果归档。</p></div>
+              <div><span>诊断</span><p>校验失败、状态不完整和关键指标缺失均保留为可读记录。</p></div>
+              <div><span>恢复</span><p>记录受控过载后的指标回落，以及推理进程退出后的重新 ready / smoke。</p></div>
+            </div>
+            <p class="reading-link"><a href="docs/reports/04_Week6阶段B_PrometheusGrafana过载与恢复记录.md">查看 Prometheus / Grafana 与恢复记录 <span aria-hidden="true">→</span></a></p>
+          </section>
+
+          <section id="documents" class="section section-anchor">
+            <div class="section-heading">
+              <p class="eyebrow">04 / DOCUMENTS</p>
+              <h2>按问题阅读项目材料</h2>
+            </div>
+            <div class="document-grid">
+              <a href="docs/project-plan.md"><span>项目总线</span><strong>完整逻辑与技术决策</strong><small>项目问题、阶段、结果与后续计划</small></a>
+              <a href="docs/articles/a100-inference-experiment.md"><span>主文章</span><strong>A100 推理部署实验</strong><small>从 TP 对照到容量优化的过程</small></a>
+              <a href="docs/reports/a100-tp1-vs-tp2-formal-baseline.md"><span>A 级证据</span><strong>TP1 vs TP2 正式基线</strong><small>18 轮受控实验与尾延迟审计</small></a>
+              <a href="docs/reports/a100-quantization-capacity.md"><span>A 级证据</span><strong>量化与容量规划</strong><small>显存、SLO 和质量的完整对照</small></a>
+              <a href="docs/reports/benchmark-engineering-results.md"><span>B 级证据</span><strong>Benchmark 工程化</strong><small>runner、校验、诊断与质量门禁</small></a>
+              <a href="docs/reports/inspection-replay-60m.md"><span>B 级证据</span><strong>60 分钟离线巡检回放</strong><small>业务形态输入、回放与归档</small></a>
+            </div>
+          </section>
+
+          <section id="supplementary" class="section supplementary section-anchor">
+            <div class="section-heading">
+              <p class="eyebrow">05 / SUPPLEMENTARY MATERIALS</p>
+              <h2>平台架构与异构部署补充材料</h2>
+            </div>
+            <p class="supplementary-intro">以下材料记录主性能线之外已经完成的工程工作：服务化架构、异构硬件部署、框架准入、模型适配，以及并行通信和运行恢复排查。它们补全项目的工程广度；模型、硬件、权重格式和负载不同，指标分别阅读，不做横向性能排名。</p>
+            <div class="supplementary-grid">
+              <a href="docs/architecture/service-governance-boundaries.md"><span>服务架构</span><strong>服务化架构与治理边界</strong><small>调用方、网关与推理引擎的职责拆分，以及 runner 和就绪检查记录。</small></a>
+              <a href="docs/reports/gb10-llama-cpp-validation.md"><span>异构部署</span><strong>GB10 ARM64 上的 llama.cpp</strong><small>GGUF 编译、服务启动、冷热请求、并发阶梯和连续请求验证。</small></a>
+              <a href="docs/reports/tensorrt-llm-validation.md"><span>框架准入</span><strong>TensorRT-LLM 基础验证</strong><small>Qwen3 PyTorch backend 准入与统一短负载三轮对照。</small></a>
+              <a href="docs/reports/qlora-industrial-work-order-extension.md"><span>模型适配</span><strong>QLoRA 工单训练与离线评测</strong><small>从合成结构化事实到工单 schema 的训练迭代和硬案例评测。</small></a>
+              <a href="docs/experimental-notes/nccl-numa-observations.md"><span>系统排查</span><strong>并行与通信排查笔记</strong><small>TP / PP、显存预分配、NCCL / NUMA 与 KV Cache 的检查记录。</small></a>
+              <a href="docs/reports/inspection-replay-60m.md"><span>运行验证</span><strong>观测、恢复与业务回放</strong><small>指标采集、受控过载、进程恢复和 60 分钟离线巡检文本回放。</small></a>
+            </div>
+          </section>
+        </article>
+
+        <footer>LLM 推理服务平台 · 已完成实验与工程记录 · <a href="SOURCE_MANIFEST.md">公开范围说明</a></footer>
+      </main>
+
+      <aside class="facts" aria-label="项目摘要">
+        <div class="facts-inner">
+          <p class="facts-label">项目摘要</p>
+          <dl>
+            <div><dt>主框架</dt><dd>vLLM 0.19.0</dd></div>
+            <div><dt>主硬件</dt><dd>A100 80GB PCIe x2</dd></div>
+            <div><dt>核心实验</dt><dd>Qwen2.5-7B 并行 / Qwen3-32B 量化</dd></div>
+            <div><dt>主方法</dt><dd>受控对照 + SLO + 质量回归</dd></div>
+          </dl>
+          <div class="facts-rule"></div>
+          <p class="facts-label">关键读数</p>
+          <div class="quick-stat"><strong>18</strong><span>TP1 / TP2 受控实验</span></div>
+          <div class="quick-stat"><strong>1,800</strong><span>正式基线请求</span></div>
+          <div class="quick-stat"><strong>500</strong><span>固定质量回归题</span></div>
+          <a class="repository-link" href="https://github.com/cssnoeasy/a100-vllm-benchmark-blog" target="_blank" rel="noreferrer">GitHub Repository <span aria-hidden="true">↗</span></a>
+        </div>
+      </aside>
     </div>
-  </header>
-
-  <div class="reading-progress" id="reading-progress"></div>
-  <div class="mobile-backdrop" id="mobile-backdrop"></div>
-  <main id="main-content" class="shell">
-    <aside class="left-sidebar" id="left-sidebar">
-      <div class="sidebar-label">项目导航</div>
-      <nav class="tree-nav" aria-label="项目导航">
-        <a class="tree-item current" href="#overview"><span class="tree-dot blue"></span>项目概览</a>
-        <div class="tree-group">
-          <div class="tree-heading"><span class="tree-dot cyan"></span><span>核心实验</span><em>03</em></div>
-          <a class="tree-child" href="#tp2">TP1 / TP2 并行策略</a>
-          <a class="tree-child" href="#quantization">量化与 KV Cache</a>
-          <a class="tree-child" href="#slo">SLO 与容量规划</a>
-        </div>
-        <div class="tree-group">
-          <div class="tree-heading"><span class="tree-dot orange"></span><span>工程验证</span><em>04</em></div>
-          <a class="tree-child" href="#observability">可观测性与恢复</a>
-          <a class="tree-child" href="#reports">Benchmark 工程化</a>
-          <a class="tree-child" href="#reports">GB10 / TensorRT-LLM</a>
-          <a class="tree-child" href="#reports">QLoRA 离线扩展</a>
-        </div>
-      </nav>
-      <div class="sidebar-note">
-        <span class="note-icon">✓</span>
-        <div><strong>证据优先</strong><p>每个结论都回到配置、结果和边界。</p></div>
-      </div>
-    </aside>
-
-    <article class="content">
-      <section class="hero section-anchor" id="overview">
-        <div class="eyebrow"><span class="status-dot"></span>可审计的推理部署实验</div>
-        <h1>大模型推理服务<br><span>性能与部署记录</span></h1>
-        <p class="hero-copy">围绕 A100 上的 vLLM 服务，记录并行策略、精度选择、KV Cache 容量、SLO 和故障恢复。重点不是“用了哪些框架”，而是每次改动带来了什么收益，以及收益的代价是什么。</p>
-        <div class="hero-actions">
-          <a class="primary-action" href="docs/reports/deployment-optimization-summary.md">阅读优化总览 <span>→</span></a>
-          <a class="text-action" href="#reports">查看全部报告 <span>↓</span></a>
-        </div>
-        <div class="hero-meta"><span>Qwen2.5-7B-Instruct</span><span>vLLM 0.19.0</span><span>A100 80GB PCIe × 2</span><span>18 轮正式基线</span></div>
-      </section>
-
-      <section class="signal-grid section-anchor" id="evidence" aria-label="核心指标">
-        <div class="signal-card featured"><span class="signal-label">并行策略 · TP2</span><strong>+33.42<span>–44.71%</span></strong><p>绝对吞吐提升</p><a href="#tp2">查看边界 →</a></div>
-        <div class="signal-card"><span class="signal-label">W4A16 GPTQ</span><strong>−70.5<span>%</span></strong><p>模型加载显存</p><a href="#quantization">查看质量代价 →</a></div>
-        <div class="signal-card"><span class="signal-label">SLO 容量</span><strong>0.6 <span>→</span> 1.3</strong><p>最高已验证 request-rate</p><a href="#slo">查看测试口径 →</a></div>
-      </section>
-
-      <section class="prose-section section-anchor" id="tp2">
-        <div class="section-kicker">01 / 核心实验</div>
-        <h2>双卡并行，收益来自哪里</h2>
-        <p>在两张无 NVLink、跨 NUMA 的 A100 PCIe 上，对 Qwen2.5-7B-Instruct 做 TP1 与 TP2 的受控对照。每种负载重复 3 次，共 18 轮、1800 个请求，所有轮次均成功完成。</p>
-        <div class="comparison-table"><div class="table-row table-head"><span>观察项</span><span>已验证结果</span><span>解释</span></div><div class="table-row"><span>绝对吞吐</span><b>+33.42% ～ +44.71%</b><span>三类合成负载均提升</span></div><div class="table-row"><span>重负载 TPOT p99</span><b>−31.15%</b><span>长输入、长输出、高并发</span></div><div class="table-row"><span>重负载 E2E p99</span><b>−28.37%</b><span>尾延迟同步改善</span></div></div>
-        <div class="callout warning"><span>!</span><p><strong>不能忽略的反例</strong> 长输入短输出时 TTFT p50/p95 上升 5.43%/5.29%；短负载 TPOT p99 上升 59.93%。TP2 使用两张 GPU，因此不能直接推导单位 GPU 效率更高或双卡全面更快。</p></div>
-        <a class="report-link" href="docs/reports/a100-tp1-vs-tp2-formal-baseline.md">打开完整 TP1 / TP2 报告 <span>↗</span></a>
-      </section>
-
-      <section class="prose-section section-anchor" id="quantization">
-        <div class="section-kicker">02 / 核心实验</div>
-        <h2>显存换容量，也换来质量代价</h2>
-        <p>量化实验同时记录模型加载显存、GPU KV token、固定 SLO 下的容量和固定 500 题质量集。这样可以把“省了多少显存”和“能不能多接请求”放在同一张决策表里。</p>
-        <div class="metric-pair"><div><span>BF16</span><strong>61.03 GiB</strong><small>加载显存 · 39,200 GPU KV token</small></div><div class="metric-arrow">→</div><div class="accent-block"><span>self W4A16 GPTQ</span><strong>18.03 GiB</strong><small>加载显存 · 215,344 GPU KV token</small></div></div>
-        <div class="inline-stats"><div><strong>5.49×</strong><span>GPU KV token 容量</span></div><div><strong>+116.7%</strong><span>最高 request-rate</span></div><div class="negative"><strong>−6.0 pp</strong><span>固定质量集</span></div></div>
-        <div class="callout"><span>i</span><p><strong>另一条路径</strong> BF16 + FP8 KV Cache 将 GPU KV token 从 39,200 提升到 78,400，固定 500 题质量仍为 83.60%。它优化的是 KV 容量，不是权重量化。</p></div>
-        <a class="report-link" href="docs/reports/a100-quantization-capacity.md">打开量化与容量报告 <span>↗</span></a>
-      </section>
-
-      <section class="prose-section section-anchor" id="slo">
-        <div class="section-kicker">03 / 核心实验</div>
-        <h2>用 SLO 定义“能多服务多少”</h2>
-        <p>容量结论使用固定约束：失败请求为 0、P99 TTFT 不超过 4000 ms、P99 TPOT 不超过 60 ms。满足这些条件时，BF16 最高已验证 0.6 req/s，self W4A16 最高已验证 1.3 req/s。</p>
-        <div class="slo-strip"><div><span>失败请求</span><strong>0</strong></div><div><span>P99 TTFT</span><strong>≤ 4000 ms</strong></div><div><span>P99 TPOT</span><strong>≤ 60 ms</strong></div><div><span>质量集</span><strong>500 题</strong></div></div>
-        <p class="small-note">“最高已验证”只表示在本次阶梯和本次环境中通过的最高点，不等于理论上限，也不等于生产容量承诺。</p>
-      </section>
-
-      <section class="prose-section section-anchor" id="observability">
-        <div class="section-kicker">04 / 工程验证</div>
-        <h2>让服务状态可以被看见和复查</h2>
-        <p>阶段 A 建立了离线 dashboard、故障诊断和短时重复性 Smoke；阶段 B 接入 Prometheus、Grafana、自定义 GPU/System exporter，并验证受控过载和推理进程退出后的恢复链路。</p>
-        <div class="architecture"><div class="arch-node blue-node"><b>vLLM</b><small>/metrics · :8000</small></div><span>→</span><div class="arch-node"><b>Prometheus</b><small>时序采集 · :9090</small></div><span>→</span><div class="arch-node orange-node"><b>Grafana</b><small>可视化 · :3000</small></div></div>
-        <div class="callout warning"><span>!</span><p><strong>验证范围</strong> 当前证据是短时 Smoke、受控过载、进程退出/恢复和离线 60 分钟文本回放，不应表述为生产级高可用、Kubernetes 治理或机器人端到端长稳。</p></div>
-      </section>
-
-      <section class="reports-section section-anchor" id="reports">
-        <div class="section-kicker">报告索引</div><h2>从结论回到证据</h2><p>主线报告回答性能和部署决策，扩展报告记录不同硬件、框架和业务回放的验证过程。</p>
-        <div class="report-list">
-          <a class="report-row primary" href="docs/reports/deployment-optimization-summary.md"><span class="report-index">01</span><span><b>部署优化结果总览</b><small>优化动作、量化结果、资源代价与部署建议</small></span><em>A</em><span class="row-arrow">→</span></a>
-          <a class="report-row primary" href="docs/reports/a100-tp1-vs-tp2-formal-baseline.md"><span class="report-index">02</span><span><b>双 A100 TP1 vs TP2 正式基线</b><small>18 轮受控实验 · 吞吐与尾延迟</small></span><em>A</em><span class="row-arrow">→</span></a>
-          <a class="report-row primary" href="docs/reports/a100-quantization-capacity.md"><span class="report-index">03</span><span><b>A100 量化与容量规划</b><small>显存、KV Cache、SLO 容量和质量</small></span><em>A</em><span class="row-arrow">→</span></a>
-          <a class="report-row" href="docs/reports/benchmark-engineering-results.md"><span class="report-index">04</span><span><b>Benchmark 工程化与特性验证</b><small>runner、校验、质量门禁、有限特性对照</small></span><em>B</em><span class="row-arrow">→</span></a>
-          <a class="report-row" href="docs/reports/04_Week6阶段B_PrometheusGrafana过载与恢复记录.md"><span class="report-index">05</span><span><b>可观测性、过载与恢复</b><small>Prometheus / Grafana / 进程恢复工程记录</small></span><em>B</em><span class="row-arrow">→</span></a>
-          <a class="report-row" href="docs/reports/gb10-llama-cpp-validation.md"><span class="report-index">06</span><span><b>扩展验证：GB10 与 TensorRT-LLM</b><small>独立部署和有限选型对照，不参与 A100 排名</small></span><em>B</em><span class="row-arrow">→</span></a>
-        </div>
-      </section>
-
-      <section class="method-section section-anchor" id="method"><div class="method-card"><div><div class="section-kicker">阅读说明</div><h2>先看数字，再看边界</h2><p>项目只把已经完成且可以回到结果文件的内容写成结论。A/B/C/D 证据等级、实验配置、原始产物和限制条件分开记录，未完成项明确标为计划。</p></div><a class="primary-action" href="docs/methodology/evidence-policy.md">查看证据规范 <span>→</span></a></div></section>
-    </article>
-
-    <aside class="right-toc"><div class="toc-title"><span></span>本页目录</div><nav><a class="active" href="#overview">项目概览</a><a href="#tp2">01　双卡并行</a><a href="#quantization">02　量化与容量</a><a href="#slo">03　SLO 规划</a><a href="#observability">04　可观测性</a><a href="#reports">报告索引</a></nav></aside>
-  </main>
-  <footer class="site-footer"><span>Inference Lab · 可审计的推理部署实验</span><span>内容与代码以仓库记录为准 · 2026</span></footer>
-  <script src="app.js"></script>
-</body>
+    <script src="app.js"></script>
+  </body>
 </html>

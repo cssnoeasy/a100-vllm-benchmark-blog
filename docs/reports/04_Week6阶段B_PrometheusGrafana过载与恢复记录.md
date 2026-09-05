@@ -11,9 +11,11 @@
 - 自定义 GPU/System exporter 以 systemd 服务运行。
 - 受控高并发探针验证压力和恢复。
 - 推理进程退出/恢复探针验证 `up: 1 -> 0 -> 1` 和恢复后真实请求。
-- 可复现配置、Dashboard JSON、exporter 和证据归档进仓库。
+- 可公开的配置、Dashboard JSON、exporter 和脱敏报告归档进仓库。
 
-未完成项：至少 60 分钟真实业务长稳测试。该项延期到第七、八周后，在受控的真实业务链路上执行。
+未完成项：至少 60 分钟真实业务长稳测试。按第六周当时的计划，该项延期到第七、八周后，在受控的真实业务链路上执行。
+
+后续进展：第七周已另行完成 [60 分钟离线巡检文本推理回放](inspection-replay-60m.md)。该回放是脱敏离线文本验证，不含真实业务链路或机器人端到端组件；它补充业务形态输入的工程验证，不把本报告的短时 Smoke、过载和进程恢复证据扩展为真实业务长稳结论。
 
 ## 2. 运行架构
 
@@ -40,19 +42,19 @@ GPU/System exporter :9400 -> nvidia-smi + host memory/load
 
 ## 3. 可复现资产
 
-仓库正式结构：
+当前公开副本结构：
 
 ```text
 observability/
 ├── README.md
 ├── prometheus/prometheus.yml
-├── grafana/dashboards/vllm_engineered_dashboard.json
+├── grafana/vllm_engineered_dashboard.json
 └── exporters/
     ├── week6_gpu_system_exporter.py
     └── week6-gpu-system-exporter.service
 ```
 
-活动配置和运行数据仍位于系统目录：
+下列路径属于受控 Linux GPU 实验环境的运行目录，不是仓库目录，也不能在 Windows 本地直接套用：
 
 - `/etc/prometheus/prometheus.yml`
 - `/etc/grafana/`
@@ -67,7 +69,7 @@ observability/
 正式 JSON：
 
 ```text
-observability/grafana/dashboards/vllm_engineered_dashboard.json
+observability/grafana/vllm_engineered_dashboard.json
 ```
 
 面板分三组：
@@ -87,7 +89,7 @@ observability/grafana/dashboards/vllm_engineered_dashboard.json
 
 ## 5. 受控过载证据
 
-入口：`scripts/run_overload_probe.py`。
+当前公开副本入口：`scripts/runner/run_overload_probe.py`。下表数字来自原工程快照中的已完成受控测试；当前仓库未迁入其 `results/week6/` 原始结果目录。
 
 | 场景 | 请求配置 | 完成/失败 | Output tok/s | P99 TTFT | P99 TPOT |
 | ---- | ---- | ---- | ---- | ---- | ---- |
@@ -101,11 +103,11 @@ observability/grafana/dashboards/vllm_engineered_dashboard.json
 
 ## 6. 进程退出与恢复证据
 
-入口：`scripts/run_process_exit_recovery_probe.py`。
+当前公开副本入口：`scripts/runner/run_process_exit_recovery_probe.py`。以下结果来自原工程快照中的已完成受控测试；当前仓库未迁入其 `results/week6/` 原始结果目录。
 
-- 初始 PID：`122563`
+- 初始进程：原推理进程
 - SIGTERM 后 Prometheus 检测到 down：`True`
-- 重启 PID：`133283`
+- 重启进程：重启后的推理进程
 - Prometheus 检测恢复：`True`
 - `/v1/models` 验证成功：`True`
 - 恢复后 benchmark：16 completed、0 failed
@@ -129,7 +131,9 @@ observability/grafana/dashboards/vllm_engineered_dashboard.json
 
 最终静态检查通过：Python compile、Shell syntax、Dashboard JSON、Prometheus config。服务检查通过：Prometheus、Grafana、exporter active，vLLM 模型端点可用。
 
-## 9. 正式证据路径
+## 9. 历史证据与当前公开资产
+
+以下 `results/week6/` 路径是原工程快照中的历史证据定位，不是当前公开副本中的文件。公开副本保留可审查的探针脚本、Prometheus 配置、Grafana JSON 和筛选后的截图。
 
 ```text
 results/week6/overload_probe/overload_summary.md
@@ -137,17 +141,19 @@ results/week6/overload_probe/summary.json
 results/week6/process_exit_recovery/process_exit_recovery_summary.md
 results/week6/process_exit_recovery/summary.json
 results/week6/process_exit_recovery/post_recovery_smoke/result.json
-observability/grafana/dashboards/vllm_engineered_dashboard.json
+observability/grafana/vllm_engineered_dashboard.json
 ```
 
 本地截图：
 
 ```text
-assets/Week6_Grafana_vLLM工程化可观测性总览.png.png
-assets/Week6_Grafana_vLLM持续过载压力观测.png
-assets/Week6_Grafana_vLLM进程退出与恢复观测.png
+assets/figures/week6-observability-overview.png
+assets/figures/week6-overload.png
+assets/figures/week6-process-recovery.png
 ```
 
 ## 10. 后续接续点
 
-第七、八周完成业务服务后，再设计跨主机长稳：固定版本和配置，定义至少 60 分钟时长、业务请求模型、SLO、错误率阈值、资源泄漏判定、恢复检查和证据保留周期。不要把本周短时 smoke 或压力探针冒充长稳结论。
+第六周当时的计划是：第七、八周完成业务服务后，再设计跨主机长稳，固定版本和配置，定义至少 60 分钟时长、业务请求模型、SLO、错误率阈值、资源泄漏判定、恢复检查和证据保留周期。
+
+实际后续已完成的是独立的 [60 分钟离线巡检文本推理回放](inspection-replay-60m.md)，并非上述跨主机真实业务长稳。不要把本周短时 Smoke、压力探针或该离线回放冒充为真实业务长稳结论。

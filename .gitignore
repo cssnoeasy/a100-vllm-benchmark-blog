@@ -18,3 +18,5 @@ results/**/requests.jsonl
 *.gguf
 *.zip
 .DS_Store
+__pycache__/
+*.py[cod]

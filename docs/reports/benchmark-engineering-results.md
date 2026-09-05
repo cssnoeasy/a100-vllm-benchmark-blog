@@ -76,13 +76,16 @@
 
 ## 8. 来源与复现入口
 
-原始已完成结果保留在暑期任务的服务器工程快照中，主项目只收录脱敏总结和可公开脚本：
+原始已完成结果保留在暑期任务的服务器工程快照中。下列 `results/week5/` 和 `results/tables/` 仅是历史证据定位，不是当前公开副本中的文件；主项目只收录脱敏总结和可公开脚本：
 
 - `results/tables/prefix_caching_repeated_c16.md`
 - `results/tables/chunked_prefill_on_off_c16.md`
 - `results/week5/week5_validated_summary.md`
 - `results/week5/week5_quality_gate.md`
 - `results/week5/week5_runner_smoke_summary.md`
-- `scripts/runner/runner_core.py`、`validate_run.py`、`summarize_runs.py`
+- `scripts/runner/runner_core.py`
+- `scripts/runner/validate_run.py`
+- `scripts/runner/summarize_runs.py`
+- `scripts/runner/diagnose_run.py`
 
 运行新的实验时必须重新生成配置、manifest、原始结果与校验记录；历史数字只能在本报告声明的范围内引用。

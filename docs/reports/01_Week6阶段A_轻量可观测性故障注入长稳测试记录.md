@@ -6,7 +6,9 @@
 
 第六周阶段 A 承接第五周的 vLLM 自动化 runner。第五周已经完成实验执行、profile/default 配置、质量门禁、stale run 清理和 Week5 报告。第六周 A 阶段先做离线轻量闭环：让已有 benchmark 结果可观测、失败可解释、短时重复性可复查，再把实时监控留给阶段 B。
 
-本文中的“稳定性 Smoke”特指两轮相同配置的短时重复性验证，不等同于原计划中至少 60 分钟的业务长稳测试。后者已明确延期到第七、八周完成后，结合受控的真实业务链路执行。
+本文中的“稳定性 Smoke”特指两轮相同配置的短时重复性验证，不等同于原计划中至少 60 分钟的业务长稳测试。按第六周当时的计划，后者需在第七、八周结合受控的真实业务链路执行。
+
+后续进展：第七周已另行完成 [60 分钟离线巡检文本推理回放](inspection-replay-60m.md)。该回放验证的是脱敏文本请求、回放客户端、结果归档和质量门禁链路，不是本报告原计划中的真实业务长稳，因此不改变本报告中 Smoke、故障注入和短时重复性证据的范围。
 
 当前阶段已经完成三个模块：
 
@@ -14,12 +16,7 @@
 - 故障注入与诊断闭环：失败样本、诊断规则、summary 汇总。
 - 稳定性 smoke 最小实现：两轮 smoke benchmark，计算短时重复性波动。
 
-统一刷新入口已经完成：
-
-```bash
-cd <PROJECT_ROOT>
-python scripts/refresh_observability.py
-```
+原始工程快照曾提供统一刷新入口 `scripts/refresh_observability.py`。公开副本只迁入可公开的 runner、监控资产和脱敏报告，未迁入其依赖的 Week5 原始结果目录与历史辅助脚本，因此不能在本仓库直接执行该命令。
 
 ## 服务器环境
 
@@ -30,9 +27,13 @@ python scripts/refresh_observability.py
 - 主要端口：`8000`
 - GPU：A100 80GB，当前实验主要使用 `CUDA_VISIBLE_DEVICES=0`
 
-## 新增/关键脚本
+## 历史脚本与当前公开入口
 
-### `scripts/build_dashboard.py`
+除下文明确标记为公开副本的文件外，脚本名、结果路径和命令均来自原工程快照，只用于说明已完成的历史工作，不能在当前公开仓库中直接执行。当前公开副本可审查的入口包括 `scripts/runner/runnerctl.py`、`runner_core.py`、`diagnose_run.py`、`validate_run.py`、`summarize_runs.py`、`run_overload_probe.py`、`run_process_exit_recovery_probe.py`、`observability/prometheus/prometheus.yml` 和 `observability/grafana/vllm_engineered_dashboard.json`。
+
+### 历史 `scripts/build_dashboard.py`
+
+以下内容记录原工程快照中的已完成工具，不是当前公开副本的可执行入口。
 
 读取 `results/week5/week5_matrix.csv`、`results/week5/week5_quality_gate.md`、各 run 的 `manifest.json`、`diagnosis.md`、`gpu_metrics.csv`，生成单文件 dashboard：
 
@@ -51,7 +52,7 @@ results/dashboard/index.html
 - 故障中心展示 failed/validation_failed/stale 等非成功样本。
 - 完整结果表展示吞吐、p99 TTFT、p99 TPOT、GPU samples/max util。
 
-### `scripts/diagnose_run.py`
+### 公开副本中的 `scripts/runner/diagnose_run.py`
 
 读取单个 run 目录下的：
 
@@ -81,7 +82,7 @@ results/runs/<run_id>/diagnosis.md
 - `NO_FAILURE_DETECTED`
 - `UNKNOWN`
 
-### `scripts/run_failure_injection_suite.py`
+### 历史 `scripts/run_failure_injection_suite.py`
 
 故障注入 suite，当前覆盖三个稳定样本：
 
@@ -103,7 +104,7 @@ python scripts/run_failure_injection_suite.py --rerun-existing
 
 端口占用类样本默认是 unsafe，需要显式参数和手动端口占用配合，不建议自动化直接重跑。
 
-### `scripts/run_soak_suite.py`
+### 历史 `scripts/run_soak_suite.py`
 
 稳定性 smoke suite，当前使用：
 
@@ -125,7 +126,7 @@ results/week6/soak_summary.md
 
 注意：`trial_soak1` 曾因残留 vLLM 服务影响处于 `starting`，已用 `mark_week5_stale_runs.py` 标为 `stale`，保留为中间态样本。
 
-### `scripts/refresh_observability.py`
+### 历史 `scripts/refresh_observability.py`
 
 统一刷新入口，当前串起：
 
@@ -139,7 +140,7 @@ results/week6/soak_summary.md
 8. `scripts/build_dashboard.py`
 9. 输出 `results/week6/observability_refresh.md`
 
-## 新增配置
+## 历史配置与公开副本范围
 
 故障注入配置：
 
@@ -153,7 +154,7 @@ results/week6/soak_summary.md
 - `configs/experiments/soak_single_gpu_smoke_trial2.yaml`：validated。
 - `configs/experiments/soak_single_gpu_smoke_trial3.yaml`：validated。
 
-## 当前关键产物
+## 历史关键产物
 
 - `results/dashboard/index.html`
 - `results/week6/observability_refresh.md`
@@ -176,7 +177,7 @@ Week6_静态可观测性Dashboard_Week5数据.html.html
 Week6_静态可观测性Dashboard_Week5数据.html
 ```
 
-## 最近一次健康状态
+## 原工程快照最近一次健康状态
 
 最近一次 `refresh_observability.py` 后：
 
@@ -207,20 +208,20 @@ external_dependency_matches: 0
 
 这些规划已经在阶段 B 落地：vLLM 原生指标由 Prometheus 抓取，GPU/System 指标由独立 exporter 提供，Grafana 通过受控访问通道访问；历史 benchmark 仍保留静态 Dashboard，不强行并入在线时序监控。
 
-## 最终验收口径
+## 历史阶段验收口径
 
 阶段 A 的最终状态是“离线观测、诊断规则和短时重复性验证完成”，而不是“完整长稳测试完成”。
 
 | 验收项 | 状态 | 证据 |
 | ---- | ---- | ---- |
-| 静态 Dashboard 可离线打开 | 完成 | `results/dashboard/index.html` |
-| HTML 不依赖 CDN，内嵌 JSON 可解析 | 完成 | `external_dependency_matches: 0`、`contains_html_escaped_quotes: False` |
-| 失败 run 自动生成诊断 | 完成 | 各 run 的 `diagnosis.md` |
-| 三类故障注入匹配预期 | 完成 | `results/week6/failure_injection_summary.md` |
-| 两轮相同配置短时重复性验证 | 完成 | `results/week6/soak_summary.md` |
-| 至少 60 分钟真实业务长稳 | 延期 | 第七、八周后结合双机业务链路执行 |
+| 静态 Dashboard 可离线打开 | 历史完成 | `results/dashboard/index.html` |
+| HTML 不依赖 CDN，内嵌 JSON 可解析 | 历史完成 | `external_dependency_matches: 0`、`contains_html_escaped_quotes: False` |
+| 失败 run 自动生成诊断 | 历史完成 | 各 run 的 `diagnosis.md` |
+| 三类故障注入匹配预期 | 历史完成 | `results/week6/failure_injection_summary.md` |
+| 两轮相同配置短时重复性验证 | 历史完成 | `results/week6/soak_summary.md` |
+| 至少 60 分钟真实业务长稳 | 第六周未完成 | 当时计划在第七、八周结合双机业务链路执行；后续完成的是独立的 60 分钟离线文本回放，见 `inspection-replay-60m.md` |
 
-## 本地归档
+## 原工程快照归档
 
 第六周最终服务器工程快照位于原始暑期任务目录；公开副本只保留经过筛选的工程文件：
 
@@ -228,4 +229,4 @@ external_dependency_matches: 0
 服务器工程快照/<快照目录>
 ```
 
-静态 Dashboard、Grafana JSON 和截图分别归档在本目录的 `dashboards/` 与 `assets/`。服务器仍是运行环境，本地快照是 2026-08-02 的阶段性可追溯副本。
+原工程快照中的静态 Dashboard 与历史结果未迁入公开仓库；公开副本保留 `observability/grafana/` 下的 Dashboard JSON、`assets/figures/` 下的截图，以及可公开的 runner、配置和报告。服务器仍是运行环境，本地快照是 2026-08-02 的阶段性可追溯副本。
